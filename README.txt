@@ -1,38 +1,30 @@
-ENGLISH QUEST v1.0  /  2026-09-17
+ENGLISH QUEST v1.1  /  2026-09-27
 ================================
-これは「PC・iPad共用、単語の修行の塔」の静的Webアプリです。
-GitHubアカウントとWebサイト公開操作はご本人にお願いします。
 
-入っているファイル：
-index.html / style.css / app.js / manifest.webmanifest /
-service-worker.js / icon-192.png / icon-512.png / README.txt / .nojekyll
+v1.0 からの更新版です。GitHub Pages の同じリポジトリの root に、
+このフォルダ内のファイルを上書きアップロードしてください。
 
-1. GitHubアカウントを作る：https://github.com/signup
-   自分でメールアドレス確認やパスワード設定を行ってください。
-2. 新しいリポジトリを作る：名前 english-quest / Public / Create repository。
-3. リポジトリの「Add file」→「Upload files」。
-   ZIP自体はアップロードせず、解凍したフォルダ内のファイルをすべて
-   リポジトリの一番上（root）にアップロードしてコミットします。
-   ※.nojekyllは隠しファイルなので、見えなければ後でGitHub上で作成できます。
-4. 「Settings」→「Pages」→「Build and deployment」→
-   Source: Deploy from a branch / Branch: main / Folder: /(root) → Save。
-5. GitHubのPages設定に表示された公開URLをPCで開いて動作を確認します。
-   URLの例：https://ユーザー名.github.io/english-quest/
-6. iPadのSafariで同URLを開く→共有→ホーム画面に追加→
-   「Webアプリとして開く」をオン→追加。
+主な更新：
+- STAGE 1 → STAGE 2 → STAGE 3 の進行を画面上で分かりやすく表示
+- STAGE 3でスペルミスの「抜け・余分・違う文字」を簡単に表示
+- TODAY'S QUESTを NEW / REVIEW に分けて表示
+- 単語図鑑に ★☆☆ / ★★☆ / ★★★ / 👑 MASTER を表示
+- 今日の修行が残っていれば、結果画面から「もう5語」できる
+- always / usually / before / after を単語候補に追加
+- v1.0 の localStorage 記録を自動移行（EXP・進捗を保持）
+- Service Worker を更新し、公開後の新バージョンを取り込みやすく変更
 
-注意：
-- GitHub Pagesで公開したHTML/JSや問題用の単語データは世界中から閲覧可能です。
-  本名、学校名、答案、学習履歴、パスワードはリポジトリに入れないこと。
-- 学習履歴はブラウザ内にだけ保存されます。PC/iPad間の自動同期はありません。
-  PCの「記録」でJSONを書き出し、iPad版の「記録」で読み込めば引き継げます。
-  端末を切り替える前には、最新の端末からバックアップしてください。
-- Safariとホーム画面版で保存領域が別になることがあります。
-  ホーム画面版の利用開始後はそちらを優先して、JSONをバックアップしてください。
-- プライベートブラウズやブラウザデータ削除は履歴消失につながることがあります。
-- オフライン利用はGitHub PagesのHTTPS公開後、通信中の初回読込で準備されます。
-  保存領域やブラウザ設定により必ず使える保証はありません。
-- 音声認識は使っていません。STAGE 2は自分で「言えた / まだ」を判定します。
-- STAGE 3はキーボード入力です。Apple Pencil手書き認識は未実装です。
-- EXPはPDFから54EXPを初期引継ぎし、アプリ内の新たな試行だけ加算します。
-- 最初の5語以降は本人が任意のタイミングで5語ずつ追加できます。
+更新手順：
+1. GitHub の english-name リポジトリを開く。
+2. Add file → Upload files。
+3. このZIPを解凍し、中のファイル全部をアップロード。
+   同名ファイルは更新対象になります。
+4. Commit changes。
+5. GitHub PagesのURLを開く。
+6. 一度 Ctrl+F5（PC）またはページ再読み込み。まだv1.0ならもう一度再読み込み。
+7. 画面右上が v1.1 になれば更新完了。
+
+大事：
+- STORE_KEY は v1.0 と同じなので、同じブラウザ・同じサイトURLなら現在の進捗を引き継ぎます。
+- 念のため、更新前に「記録 → バックアップJSONを保存」を推奨します。
+- PCとiPadは学習履歴が自動同期されません。必要ならJSONで移します。

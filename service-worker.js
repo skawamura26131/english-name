@@ -1,5 +1,5 @@
-const CACHE_NAME = 'english-quest-v1-20260917';
-const ASSETS = ['./','./index.html','./style.css','./app.js','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const CACHE_NAME = 'english-quest-v1-1-20260927';
+const ASSETS = ['./','./index.html','./style.css?v=1.1','./app.js?v=1.1','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
@@ -8,5 +8,11 @@ self.addEventListener('activate', event => {
 });
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET' || new URL(event.request.url).origin !== self.location.origin) return;
-  event.respondWith(caches.match(event.request).then(cached => cached || fetch(event.request)));
+  event.respondWith(
+    fetch(event.request).then(response => {
+      const copy=response.clone();
+      caches.open(CACHE_NAME).then(cache=>cache.put(event.request,copy)).catch(()=>{});
+      return response;
+    }).catch(()=>caches.match(event.request).then(r=>r||caches.match('./index.html')))
+  );
 });

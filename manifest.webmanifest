@@ -1,7 +1,7 @@
 {
  "name":"ENGLISH QUEST - 単語の修行の塔",
  "short_name":"英語クエスト",
- "description":"見て、言って、見ずに書く。3段階の英単語学習。",
+ "description":"見て、言って、見ずに書く。3段階＋復習間隔で進める英単語学習。",
  "start_url":"./index.html",
  "scope":"./",
  "display":"standalone",
