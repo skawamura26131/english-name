@@ -1,12 +1,25 @@
 {
- "name":"ENGLISH QUEST - 単語の修行の塔",
- "short_name":"英語クエスト",
- "description":"見て、言って、見ずに書く。3段階＋復習間隔で進める英単語学習。",
- "start_url":"./index.html",
- "scope":"./",
- "display":"standalone",
- "background_color":"#f3f6fa",
- "theme_color":"#172742",
- "lang":"ja",
- "icons":[{"src":"./icon-192.png","sizes":"192x192","type":"image/png","purpose":"any maskable"},{"src":"./icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]
+  "name": "ENGLISH QUEST - 単語の修行の塔",
+  "short_name": "英語クエスト",
+  "description": "初めは1→2→3、慣れたらMIX。発音確認とスペル練習で定着させる英単語学習。",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f3f6fa",
+  "theme_color": "#172742",
+  "lang": "ja",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
 }

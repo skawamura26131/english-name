@@ -4,35 +4,39 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#172742">
-  <meta name="description" content="見て、声に出して、見ずに書く。自分のペースで進める英単語の修行の塔。">
+  <meta name="description" content="見て、言って、聞いて、見ずに書く。最初は順番、慣れたらMIX復習。">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="英語クエスト">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=1.2p456">
+  <link rel="stylesheet" href="./style.css?v=1.3p456">
   <title>ENGLISH QUEST | 修行の塔</title>
-  <script src="./app.js?v=1.2p456" defer></script>
+  <script src="./app.js?v=1.3p456" defer></script>
 </head>
 <body>
-  <div class="shell">
-    <header class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">✦</span><div><strong>ENGLISH QUEST</strong><small>単語の修行の塔</small></div></div><span class="version">v1.2 · P4-6</span></header>
-    <main>
-      <section id="home" class="view active" aria-label="ホーム">
-        <div class="hero"><div class="eyebrow">ADVENTURE STATUS</div><div class="hero-top"><h1 id="level-title">Lv.1 はじまりの村</h1><span id="xp-label">54 EXP</span></div><div class="progress"><span id="xp-bar" style="width:54%"></span></div><div class="hero-bottom"><span id="next-label">次のレベルまで46 EXP</span><span>間違えてもEXPは減らない</span></div></div>
-        <div class="stat-grid"><div class="stat"><span>図鑑に登録</span><strong id="unlocked-stat">5語</strong></div><div class="stat"><span>完全マスター</span><strong id="master-stat">0語</strong></div><div class="stat"><span>今日の修行</span><strong id="due-stat">5語</strong></div></div><div class="focus-banner"><span>TEST RANGE</span><strong>PROGRAM 4・5・6</strong><small id="focus-status">TEST RANGE ON</small></div>
-        <div class="panel featured"><div class="panel-label">TODAY'S QUEST</div><h2>5語だけ、やってみよう</h2><p id="home-message">今日の復習から始めます。終わったらそこで終了してもOK。</p><button class="primary" id="start-btn">修行をはじめる <span aria-hidden="true">→</span></button><div class="quiet">目安：3〜6分　／　途中でやめても記録は残ります</div></div>
-        <div class="panel"><h2>単語の3段階</h2><div class="stages"><div><span class="stage-chip">01</span><strong>見る</strong><small>英語 → 意味</small></div><div class="connector">→</div><div><span class="stage-chip">02</span><strong>言う</strong><small>日本語 → 声で英語</small></div><div class="connector">→</div><div><span class="stage-chip">03</span><strong>書く</strong><small>日本語 → 正しい綴り</small></div></div><p class="tiny">正解した語は、その日のうちに「見る → 言う → 書く」まで進みます。その後、翌日・3日後・7日後にも確認します。</p></div>
-        <div class="actions"><button class="secondary" id="unlock-btn">新しい5語を追加する</button><button class="secondary" id="reset-today-btn">今日の学習結果を確認</button></div>
-      </section>
-      <section id="practice" class="view" aria-label="単語練習"><div class="session-head"><button class="back" id="back-btn" aria-label="ホームに戻る">← 戻る</button><span id="session-counter">1 / 5</span></div><div class="mini-progress"><span id="session-progress"></span></div><div class="practice-card"><div class="pill-row"><div id="question-stage" class="pill">STAGE 1 · 見る</div><div id="question-origin" class="origin-pill">NEW</div></div><p class="task-instruction" id="task-instruction">英語を見て意味を選ぼう</p><h2 id="question-text">different</h2><p id="question-note" class="question-note"></p><div id="answer-area"></div><div id="feedback" class="feedback" aria-live="polite" hidden></div><button id="next-btn" class="primary" hidden>次の単語へ →</button></div><div class="note-box">✦ 正解したら同じ単語で次のSTAGEへ。できなかった段階は、翌日にもう一度でOK。</div></section>
-      <section id="result" class="view" aria-label="学習結果"><div class="result-top"><div class="result-icon">✦</div><h1>今日の修行、ここまで！</h1><p>取り組んだぶんが、次の冒険につながります。</p></div><div class="panel result-stats"><div><span>今回のEXP</span><strong id="result-xp">+0</strong></div><div><span>挑戦した単語</span><strong id="result-count">0語</strong></div><div><span>復習する単語</span><strong id="result-review">0語</strong></div></div><div class="panel"><h2>次の一歩</h2><p id="result-message">次回は、復習から始めよう。</p></div><button class="primary" id="result-more-btn" hidden>もう5語やる →</button><button class="secondary full" id="result-home-btn">ホームに戻る</button></section>
-      <section id="library" class="view" aria-label="単語図鑑"><h1>単語図鑑</h1><p class="intro">3段階と、数日後の思い出しテストを記録します。</p><div id="library-list" class="library-list"></div><div class="quiet">テスト範囲の語を優先して表示します。未登録語はホームから追加できます。</div></section>
-      <section id="data" class="view" aria-label="記録とバックアップ"><h1>記録とバックアップ</h1><div class="panel"><h2>今日の記録</h2><p id="today-summary">まだ学習していません。</p><p id="overall-summary"></p></div><div class="panel"><h2>大事：バックアップ</h2><p>このアプリは学習結果を利用中のブラウザ内に保存します。PCとiPadの自動同期はありません。機種変更やブラウザデータの削除に備えて、ときどき保存してください。</p><button class="primary" id="export-json">バックアップJSONを保存</button><button class="secondary full" id="export-csv">ボーさんに渡すCSVを保存</button><label for="import-file" class="file-button">バックアップJSONを読み込む</label><input id="import-file" type="file" accept=".json,application/json" hidden><p class="tiny">読み込みは現在の端末の記録を置き換えます。確認してから反映します。データをこのチャットに添付すれば学習状況を分析できます。</p></div><div class="panel"><h2>PCとiPadで使うには</h2><p>PCで使う場合も、iPadのホーム画面から使う場合も、同じサイトを開けます。ただし進捗は別々です。端末を替えるときは「JSONを保存 → もう一方で読み込む」で移してください。</p></div></section>
-    </main>
-    <nav class="nav" aria-label="アプリメニュー"><button data-view="home" class="selected" aria-current="page"><span>⌂</span>ホーム</button><button data-view="library"><span>▦</span>図鑑</button><button data-view="data"><span>☷</span>記録</button></nav>
-  </div>
-  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
-</body>
-</html>
+<div class="shell">
+<header class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">✦</span><div><strong>ENGLISH QUEST</strong><small>単語の修行の塔</small></div></div><span class="version">v1.3 · P4-6</span></header>
+<main>
+<section id="home" class="view active" aria-label="ホーム">
+  <div class="hero"><div class="eyebrow">ADVENTURE STATUS</div><div class="hero-top"><h1 id="level-title">Lv.1 はじまりの村</h1><span id="xp-label">54 EXP</span></div><div class="progress"><span id="xp-bar" style="width:54%"></span></div><div class="hero-bottom"><span id="next-label">次のレベルまで46 EXP</span><span>間違えてもEXPは減らない</span></div></div>
+  <div class="stat-grid"><div class="stat"><span>図鑑に登録</span><strong id="unlocked-stat">5語</strong></div><div class="stat"><span>完全マスター</span><strong id="master-stat">0語</strong></div><div class="stat"><span>今日の修行</span><strong id="due-stat">5語</strong></div></div>
+  <div class="focus-banner"><span>TEST RANGE</span><strong>PROGRAM 4・5・6</strong><small id="focus-status">TEST RANGE ON</small></div>
+  <div class="panel featured"><div class="panel-label">TODAY'S QUEST</div><h2>5語だけ、やってみよう</h2><p id="home-message"></p><button class="primary" id="start-btn">修行をはじめる →</button><div class="quiet">目安：3〜6分 ／ 途中でやめても記録は残ります</div></div>
+  <div class="panel"><h2>単語の3段階</h2><div class="stages"><div><span class="stage-chip">01</span><strong>見る</strong><small>英語 → 意味</small></div><div class="connector">→</div><div><span class="stage-chip">02</span><strong>言う・聞く</strong><small>日本語 → 英語 → 🔊</small></div><div class="connector">→</div><div><span class="stage-chip">03</span><strong>書く</strong><small>日本語 → 正しい綴り</small></div></div><p class="tiny">初めての語は同じ語を1→2→3。いったん書けた語は、翌日以降STAGE 1・2・3をMIXして思い出します。</p></div>
+  <div class="actions"><button class="secondary" id="unlock-btn">新しい5語を追加する</button><button class="secondary" id="reset-today-btn">記録・バックアップ</button></div>
+</section>
+<section id="practice" class="view" aria-label="単語練習"><div class="session-head"><button class="back" id="back-btn" aria-label="ホームに戻る">← 戻る</button><span id="session-counter">1 / 5語</span></div><div class="mini-progress"><span id="session-progress"></span></div><div class="practice-card"><div class="pill-row"><div id="question-stage" class="pill">STAGE 1 · 見る</div><div id="question-origin" class="origin-pill">NEW</div></div><p class="task-instruction" id="task-instruction"></p><h2 id="question-text"></h2><p id="question-note" class="question-note"></p><div id="answer-area"></div><div id="feedback" class="feedback" aria-live="polite" hidden></div><button id="next-btn" class="primary" hidden>次の単語へ →</button></div><div class="note-box">✦ 最初は順番に育てる。定着期はMIX。できなかった段階は翌日にもう一度でOK。</div></section>
+<section id="result" class="view" aria-label="学習結果"><div class="result-top"><div class="result-icon">✦</div><h1>今日の修行、ここまで！</h1><p>取り組んだぶんが、次の冒険につながります。</p></div><div class="panel result-stats"><div><span>今回のEXP</span><strong id="result-xp">+0</strong></div><div><span>挑戦した単語</span><strong id="result-count">0語</strong></div><div><span>復習する単語</span><strong id="result-review">0語</strong></div></div><div class="panel"><h2>次の一歩</h2><p id="result-message"></p></div><div id="write-suggest" class="panel write-suggest" hidden><h2>✍️ 書き取りおすすめ</h2><p>今日は、この語を1回だけ見ずに書くと定着しやすそうです。やらなくてもOK。</p><div id="write-suggest-list" class="write-chip-list"></div></div><button class="primary" id="result-more-btn" hidden>もう5語やる →</button><button class="secondary full" id="result-home-btn">ホームに戻る</button></section>
+<section id="library" class="view" aria-label="単語図鑑"><h1>単語図鑑</h1><p class="intro">最初は順番、その後はMIX復習。数日後に思い出せるかも記録します。</p><div id="library-list" class="library-list"></div><div class="quiet">テスト範囲の語を優先して表示します。</div></section>
+<section id="data" class="view" aria-label="記録とバックアップ">
+  <h1>記録とバックアップ</h1>
+  <div class="panel"><h2>今日の記録</h2><p id="today-summary"></p><p id="overall-summary"></p></div>
+  <div class="panel"><h2>バックアップ</h2><p>学習結果はこの端末・ブラウザ内に保存します。PCとiPadは自動同期しません。</p><button class="primary" id="export-json">バックアップJSONを保存</button><button class="secondary full" id="export-csv">ボーさんに渡すCSVを保存</button><label for="import-file" class="file-button">バックアップJSONを読み込む</label><input id="import-file" type="file" accept=".json,application/json" hidden><p class="tiny">読み込みは現在の記録を置き換えます。</p></div>
+  <details class="panel dev-panel"><summary>開発・テスト用リセット</summary><p class="tiny">フールプルーフ付き。この端末のデータだけが対象です。長男くん本番運用では通常触らなくてOK。</p><button class="secondary full danger-soft" id="reset-today">今日の学習だけリセット</button><p id="reset-today-note" class="tiny"></p><button class="secondary full danger-soft" id="reset-progress">学習進捗を初期化</button><button class="secondary full danger" id="reset-all">バックアップして完全初期化</button><p class="tiny">「学習進捗を初期化」は RESET、「完全初期化」は FULL RESET の文字入力確認があります。</p></details>
+</section>
+</main>
+<nav class="nav" aria-label="アプリメニュー"><button data-view="home" class="selected" aria-current="page"><span>⌂</span>ホーム</button><button data-view="library"><span>▦</span>図鑑</button><button data-view="data"><span>☷</span>記録</button></nav>
+</div><div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+</body></html>
