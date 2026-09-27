@@ -1,5 +1,5 @@
-const CACHE_NAME = 'english-quest-v1-1-20260927';
-const ASSETS = ['./','./index.html','./style.css?v=1.1','./app.js?v=1.1','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
+const CACHE_NAME = 'english-quest-v1-2-p456-20260927';
+const ASSETS = ['./','./index.html','./style.css?v=1.2p456','./app.js?v=1.2p456','./manifest.webmanifest','./icon-192.png','./icon-512.png'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS)).then(() => self.skipWaiting()));
 });
