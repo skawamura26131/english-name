@@ -11,13 +11,13 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png" sizes="192x192">
   <link rel="apple-touch-icon" href="./icon-192.png">
-  <link rel="stylesheet" href="./style.css?v=1.4.2p456m2">
+  <link rel="stylesheet" href="./style.css?v=1.5p456kv">
   <title>ENGLISH QUEST | ことばのぼうけん</title>
-  <script src="./app.js?v=1.4.2p456m2" defer></script>
+  <script src="./app.js?v=1.5p456kv" defer></script>
 </head>
 <body>
 <div class="shell">
-<header class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">✦</span><div><strong>ENGLISH QUEST</strong><small>ことばのぼうけん</small></div></div><span class="version">v1.4.2 · P4-6</span></header>
+<header class="topbar"><div class="brand"><span class="brand-icon" aria-hidden="true">✦</span><div><strong>ENGLISH QUEST</strong><small>ことばのぼうけん</small></div></div><span class="version">v1.5 · P4-6</span></header>
 <div id="test-mode-banner" class="test-mode-banner" hidden><div><strong>TEST MODE</strong><span>見た目だけをシミュレーション中。本番データは変更しません。</span></div><div class="test-banner-actions"><button type="button" id="test-mode-open-controls">設定</button><button type="button" id="test-mode-exit-top">終了して本番へ</button></div></div>
 <main>
 <section id="home" class="view active" aria-label="ホーム">
@@ -30,7 +30,7 @@
     </div>
     <div class="adventure-body">
       <div class="avatar-wrap">
-        <canvas id="avatar-canvas" width="180" height="190" aria-label="現在の装備を身につけた街の冒険少年"></canvas>
+        <div class="hero-visual"><img id="hero-key" src="./hero-key.png" alt="街の冒険少年"><div id="hero-gear-badges" class="hero-gear-badges" aria-hidden="true"></div></div>
         <div class="avatar-caption" id="avatar-caption">街の冒険少年</div>
       </div>
       <div class="gear-grid" id="gear-grid">
@@ -45,7 +45,11 @@
     <div class="map-head"><div><div class="panel-label">ADVENTURE MAP</div><h2>いまいる場所</h2></div><strong id="map-place">はじまりの町</strong></div>
     <div id="map-track" class="map-track"></div>
     <p id="map-next" class="map-next">次の場所まで、あと25王冠。</p>
-    <p class="tiny">王冠が増えると冒険が進みます。ボス戦は、まずこの進行表示が安定してから追加します。</p>
+    <p class="tiny">王冠が増えると、少しずつ先の景色が見えてきます。</p>
+  </section>
+  <section class="panel boss-teaser" aria-label="ボスへの道">
+    <div class="boss-copy"><div class="panel-label">BOSS AHEAD</div><h2 id="boss-title">この先に、何かいる。</h2><p id="boss-message">王冠を集めると、最初のボスへの道がひらきます。</p></div>
+    <div class="boss-lock" id="boss-lock">?</div>
   </section>
   <div class="focus-banner"><span>TEST RANGE</span><strong>PROGRAM 4・5・6</strong><small id="focus-status">TEST RANGE ON</small></div>
   <div class="panel featured"><div class="panel-label">TODAY'S QUEST</div><h2>5語だけ、やってみよう</h2><p id="home-message"></p><button class="primary" id="start-btn">修行をはじめる →</button><div class="quiet">目安：3〜6分 ／ 途中でやめても記録は残ります</div></div>

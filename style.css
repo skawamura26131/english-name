@@ -58,3 +58,21 @@ body{background:linear-gradient(180deg,#fbf7ee 0%,#f5efe4 100%);color:var(--ink)
 .test-mode-banner{background:linear-gradient(90deg,#3b2a67,#4e3b88);border-bottom-color:#dccfff}
 .test-start{background:#faf7ff!important}
 @media(max-width:430px){.hero h1{font-size:25px}.adventure-head h2{font-size:19px}}
+
+
+/* v1.5 — key visual first UI. Learning logic is unchanged. */
+.avatar-wrap{padding:12px;background:linear-gradient(180deg,#fffef9,#f7f5ee);overflow:hidden}
+.hero-visual{position:relative;width:100%;display:grid;place-items:center;min-height:236px;border-radius:15px;background:#fff;overflow:hidden;border:1px solid #ece8dd}
+.hero-visual img{display:block;width:min(100%,220px);height:auto;object-fit:contain;image-rendering:auto}
+.hero-gear-badges{position:absolute;left:8px;right:8px;bottom:8px;display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.hero-gear-badge{background:rgba(31,42,91,.88);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:999px;padding:5px 4px;text-align:center;font-size:10px;font-weight:850;backdrop-filter:blur(3px)}
+.hero-gear-badge[data-tier="7"]{background:rgba(169,118,24,.92)}
+.gear-card{position:relative;overflow:hidden}
+.gear-card::after{content:"";position:absolute;left:0;bottom:0;height:4px;width:calc((var(--tier,1) / 7) * 100%);background:linear-gradient(90deg,#4bb4c4,#f2c95f)}
+.gear-card[data-tier="1"]{--tier:1}.gear-card[data-tier="2"]{--tier:2}.gear-card[data-tier="3"]{--tier:3}.gear-card[data-tier="4"]{--tier:4}.gear-card[data-tier="5"]{--tier:5}.gear-card[data-tier="6"]{--tier:6}.gear-card[data-tier="7"]{--tier:7}
+.gear-card[data-tier="7"]{border-color:#dfc46c;background:#fffaf0}
+.boss-teaser{display:flex;align-items:center;justify-content:space-between;gap:18px;background:linear-gradient(135deg,#252954,#303469 65%,#42346b);color:#fff;border-color:#363a76;overflow:hidden}
+.boss-teaser .panel-label{color:#ffd469}.boss-teaser h2{color:#fff;margin-bottom:6px}.boss-teaser p{color:#dcdff5;margin:0}.boss-copy{min-width:0}.boss-lock{width:68px;height:68px;display:grid;place-items:center;border-radius:18px;background:#171a3b;border:2px solid #6369a0;color:#adb3d3;font-size:34px;font-weight:950;box-shadow:inset 0 0 0 3px rgba(255,255,255,.04)}
+.boss-lock.ready{background:#5d243f;border-color:#ecb14f;color:#ffe48c;box-shadow:0 0 0 4px rgba(236,177,79,.12)}
+@media(max-width:680px){.hero-visual{min-height:220px}.hero-visual img{width:min(100%,205px)}}
+@media(max-width:430px){.hero-gear-badges{grid-template-columns:repeat(2,1fr)}.boss-lock{width:56px;height:56px;font-size:28px}.boss-teaser{padding:18px}}
