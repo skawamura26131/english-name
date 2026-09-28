@@ -1,6 +1,6 @@
 'use strict';
 
-// ENGLISH QUEST v1.4 · PROGRAM 4/5/6 TEST FOCUS + ADVENTURE EQUIPMENT
+// ENGLISH QUEST v1.4.2 · PROGRAM 4/5/6 TEST FOCUS + ADVENTURE EQUIPMENT + SAFE TEST MODE + M2-LIKE VISUAL
 // 学習データは端末内(localStorage)に保存。既存のv1.x記録を引き継ぎます。
 const WORDS = [{"id":"they","en":"they","jp":"彼らは・彼女らは","programs":[]},{"id":"his","en":"his","jp":"彼の","programs":[]},{"id":"friend","en":"friend","jp":"友だち（1人）","programs":[]},{"id":"different","en":"different","jp":"異なる・ちがう","programs":[]},{"id":"find","en":"find","jp":"見つける","programs":[]},{"id":"their","en":"their","jp":"彼らの・彼女らの","programs":[]},{"id":"him","en":"him","jp":"彼を・彼に","programs":[]},{"id":"friends","en":"friends","jp":"友だち（複数）","programs":[]},{"id":"look-for","en":"look for","jp":"探す","programs":[]},{"id":"need","en":"need","jp":"必要とする","programs":[]},{"id":"use","en":"use","jp":"使う","programs":[]},{"id":"together","en":"together","jp":"一緒に","programs":[]},{"id":"meet","en":"meet","jp":"会う・出会う","programs":[]},{"id":"help","en":"help","jp":"助ける","programs":[]},{"id":"travel","en":"travel","jp":"旅をする","programs":[]},{"id":"map","en":"map","jp":"地図","programs":[]},{"id":"house","en":"house","jp":"家","programs":[]},{"id":"iron","en":"iron","jp":"鉄","programs":[]},{"id":"were","en":"were","jp":"〜だった（we/you/they）","programs":[]},{"id":"was","en":"was","jp":"〜だった（I/he/she/it）","programs":[]},{"id":"do","en":"do","jp":"する・疑問文で使うdo","programs":[]},{"id":"does","en":"does","jp":"する・三単現の疑問文で使う","programs":[]},{"id":"game","en":"game","jp":"ゲーム（1つ）","programs":[]},{"id":"games","en":"games","jp":"ゲーム（複数）","programs":[]},{"id":"finds","en":"finds","jp":"見つける（主語がheなど）","programs":[]},{"id":"play","en":"play","jp":"遊ぶ・プレーする","programs":[]},{"id":"make","en":"make","jp":"作る","programs":[]},{"id":"wood","en":"wood","jp":"木材","programs":[]},{"id":"town","en":"town","jp":"町","programs":[]},{"id":"old","en":"old","jp":"古い","programs":[]},{"id":"always","en":"always","jp":"いつも","programs":[]},{"id":"usually","en":"usually","jp":"たいてい・ふつうは","programs":[]},{"id":"before","en":"before","jp":"〜の前に","programs":[]},{"id":"after","en":"after","jp":"〜の後に","programs":[]},{"id":"p4-footprint","en":"footprint","jp":"足跡","programs":[4]},{"id":"p4-leave","en":"leave","jp":"置いて［残して］いく","programs":[4]},{"id":"p4-actually","en":"actually","jp":"実際に、実のところ","programs":[4]},{"id":"p4-deer","en":"deer","jp":"シカ（複数形も同形）","programs":[4]},{"id":"p4-guitarist","en":"guitarist","jp":"ギタリスト","programs":[4]},{"id":"p4-smartphone","en":"smartphone","jp":"スマートフォン、スマホ","programs":[4]},{"id":"p4-hear-from","en":"hear from ~","jp":"〜から手紙［伝言、電話、連絡］をもらう","programs":[4],"answers":["hear from"]},{"id":"p4-clear","en":"clear","jp":"よく晴れた、雲のない","programs":[4]},{"id":"p4-glad","en":"glad","jp":"うれしい","programs":[4]},{"id":"p4-guide","en":"guide","jp":"案内する、導く","programs":[4]},{"id":"p4-hike","en":"hike","jp":"ハイキングをする","programs":[4]},{"id":"p4-true","en":"true","jp":"ほんとうの","programs":[4]},{"id":"p4-go-hiking","en":"go hiking","jp":"ハイキングに行く","programs":[4]},{"id":"p4-emotional","en":"emotional","jp":"感動的な、感情に訴える","programs":[4]},{"id":"p4-must","en":"must","jp":"〜しなければならない","programs":[4]},{"id":"p4-uh-oh","en":"uh-oh","jp":"おっと、あらら","programs":[4]},{"id":"p4-volume","en":"volume","jp":"ボリューム、音量","programs":[4]},{"id":"p4-hallway","en":"hallway","jp":"廊下","programs":[4]},{"id":"p4-potato-chip","en":"potato chip","jp":"ポテトチップ","programs":[4]},{"id":"p4-mustn-t","en":"mustn't","jp":"must not の短縮形","programs":[4]},{"id":"p4-turn-down","en":"turn down ~","jp":"（音量を）下げる","programs":[4],"answers":["turn down"]},{"id":"p4-breathtaking","en":"breathtaking","jp":"すごい、息をのむような","programs":[4]},{"id":"p4-forest","en":"forest","jp":"森","programs":[4]},{"id":"p4-garbage","en":"garbage","jp":"ごみ、生ごみ","programs":[4]},{"id":"p4-hiking","en":"hiking","jp":"ハイキング","programs":[4]},{"id":"p4-protect","en":"protect","jp":"守る、保護する","programs":[4]},{"id":"p4-rule","en":"rule","jp":"規則、ルール","programs":[4]},{"id":"p4-trouble","en":"trouble","jp":"困ったこと","programs":[4]},{"id":"p4-first-of-all","en":"first of all","jp":"何よりもまず","programs":[4]},{"id":"p4-cover","en":"cover","jp":"おおう","programs":[4]},{"id":"p4-head","en":"head","jp":"頭、頭部","programs":[4]},{"id":"p4-hood","en":"hood","jp":"（上着の）フード","programs":[4]},{"id":"p4-right","en":"right","jp":"（同意を表して）そのとおり","programs":[4]},{"id":"p4-don-t-have-to","en":"don't have to ~","jp":"〜する必要はない","programs":[4],"answers":["don't have to"]},{"id":"p4-have-to","en":"have to ~","jp":"〜する必要がある","programs":[4],"answers":["have to"]},{"id":"p4-beaver","en":"beaver","jp":"ビーバー","programs":[4]},{"id":"p4-build","en":"build","jp":"建てる、作る","programs":[4]},{"id":"p4-dam","en":"dam","jp":"ダム","programs":[4]},{"id":"p4-engineer","en":"engineer","jp":"技術者、エンジニア","programs":[4]},{"id":"p4-lodge","en":"lodge","jp":"（ビーバーなどの）巣、山小屋","programs":[4]},{"id":"p4-list","en":"list","jp":"リスト、一覧表","programs":[4]},{"id":"p4-loud","en":"loud","jp":"（音・声が）大きな、（音が）うるさい","programs":[4]},{"id":"p4-noise","en":"noise","jp":"騒音、物音","programs":[4]},{"id":"p4-own","en":"own","jp":"自分自身の","programs":[4]},{"id":"p4-school-trip","en":"school trip","jp":"修学旅行","programs":[4]},{"id":"p4-shampoo","en":"shampoo","jp":"シャンプー","programs":[4]},{"id":"p4-snack","en":"snack","jp":"おやつ、軽食","programs":[4]},{"id":"p4-sad","en":"sad","jp":"悲しい","programs":[4]},{"id":"p4-they-re","en":"they're","jp":"they are の短縮形","programs":[4]},{"id":"p4-cut-down","en":"cut down ~","jp":"〜を切り倒す","programs":[4],"answers":["cut down"]},{"id":"p4-go-to-bed","en":"go to bed","jp":"寝る、就寝する","programs":[4]},{"id":"p4-on-time","en":"on time","jp":"時間どおりに","programs":[4]},{"id":"p4-caesar-salad","en":"Caesar salad","jp":"シーザーサラダ","programs":[4]},{"id":"p4-medium","en":"medium","jp":"（肉の焼き方が）ミディアムの","programs":[4]},{"id":"p4-onion","en":"onion","jp":"タマネギ","programs":[4]},{"id":"p4-order","en":"order","jp":"注文する","programs":[4]},{"id":"p4-party","en":"party","jp":"一行、集団","programs":[4]},{"id":"p4-potato","en":"potato","jp":"ポテト、ジャガイモ","programs":[4]},{"id":"p4-rare","en":"rare","jp":"（肉の焼き方が）レアの、生焼けの","programs":[4]},{"id":"p4-share","en":"share","jp":"分け合う","programs":[4]},{"id":"p4-table","en":"table","jp":"テーブル、食卓","programs":[4]},{"id":"p4-well-done","en":"well-done","jp":"（肉が）よく焼けた","programs":[4]},{"id":"p4-be-ready-to","en":"be ready to ~","jp":"〜する準備［用意］ができている","programs":[4],"answers":["be ready to"]},{"id":"p4-earth","en":"earth","jp":"地球","programs":[4]},{"id":"p4-exercise","en":"exercise","jp":"運動、運動する","programs":[4]},{"id":"p4-finnish-style","en":"Finnish-style","jp":"フィンランド風の","programs":[4]},{"id":"p4-life","en":"life","jp":"生活、人生","programs":[4]},{"id":"p4-machine","en":"machine","jp":"機械、器具","programs":[4]},{"id":"p4-save","en":"save","jp":"救う、守る","programs":[4]},{"id":"p4-twenty-four-seven","en":"twenty-four seven","jp":"いつでも、四六時中","programs":[4]},{"id":"p4-for-free","en":"for free","jp":"無料で","programs":[4]},{"id":"p5-tablet","en":"tablet","jp":"タブレット（型コンピュータ）","programs":[5]},{"id":"p5-both","en":"both","jp":"両方、2人［2つ］とも","programs":[5]},{"id":"p5-chess","en":"chess","jp":"チェス","programs":[5]},{"id":"p5-unicycle","en":"unicycle","jp":"一輪車","programs":[5]},{"id":"p5-blame","en":"blame","jp":"責める、非難する","programs":[5]},{"id":"p5-drop","en":"drop","jp":"落とす","programs":[5]},{"id":"p5-goods","en":"goods","jp":"商品","programs":[5]},{"id":"p5-kindly","en":"kindly","jp":"親切に","programs":[5]},{"id":"p5-mistake","en":"mistake","jp":"間違い","programs":[5]},{"id":"p5-pack","en":"pack","jp":"1箱、1パック","programs":[5]},{"id":"p5-shelf","en":"shelf","jp":"たな","programs":[5]},{"id":"p5-shelves","en":"shelves","jp":"shelf（たな）の複数形","programs":[5]},{"id":"p5-treat","en":"treat","jp":"扱う","programs":[5]},{"id":"p5-by-mistake","en":"by mistake","jp":"誤って、間違って","programs":[5]},{"id":"p5-good-for-you","en":"Good for you.","jp":"よかったですね。","programs":[5]},{"id":"p5-athlete","en":"athlete","jp":"運動選手、アスリート","programs":[5]},{"id":"p5-become","en":"become","jp":"〜になる","programs":[5]},{"id":"p5-meter","en":"meter","jp":"メートル","programs":[5]},{"id":"p5-cold","en":"cold","jp":"（病気の）かぜ","programs":[5]},{"id":"p5-happen","en":"happen","jp":"起こる","programs":[5]},{"id":"p5-get-place","en":"get ~ place","jp":"（競争などで）〜位になる","programs":[5],"answers":["get place"]},{"id":"p5-action","en":"action","jp":"行動","programs":[5]},{"id":"p5-decide","en":"decide","jp":"決める、決心する","programs":[5]},{"id":"p5-everything","en":"everything","jp":"すべてのもの、なんでも","programs":[5]},{"id":"p5-listener","en":"listener","jp":"聞き手","programs":[5]},{"id":"p5-lonely","en":"lonely","jp":"さびしい、孤独な","programs":[5]},{"id":"p5-spoke","en":"spoke","jp":"speak（話す）の過去形","programs":[5]},{"id":"p5-waiting-room","en":"waiting room","jp":"待合室","programs":[5]},{"id":"p5-while","en":"while","jp":"〜する間に","programs":[5]},{"id":"p5-in-particular","en":"in particular","jp":"特に","programs":[5]},{"id":"p5-take-action","en":"take action","jp":"行動を起こす","programs":[5]},{"id":"p5-apron","en":"apron","jp":"エプロン","programs":[5]},{"id":"p5-lend","en":"lend","jp":"貸す","programs":[5]},{"id":"p5-boat","en":"boat","jp":"ボート、小舟","programs":[5]},{"id":"p5-paper","en":"paper","jp":"紙","programs":[5]},{"id":"p5-asleep","en":"asleep","jp":"眠って","programs":[5]},{"id":"p5-beside","en":"beside","jp":"〜のそばに［で］","programs":[5]},{"id":"p5-fall","en":"fall","jp":"落ちる","programs":[5]},{"id":"p5-fell","en":"fell","jp":"fall（落ちる）の過去形","programs":[5]},{"id":"p5-future","en":"future","jp":"将来の、未来の","programs":[5]},{"id":"p5-gave","en":"gave","jp":"give（与える）の過去形","programs":[5]},{"id":"p5-importance","en":"importance","jp":"大切さ、重要性","programs":[5]},{"id":"p5-nap","en":"nap","jp":"昼寝、うたた寝","programs":[5]},{"id":"p5-nursery-school","en":"nursery school","jp":"保育園","programs":[5]},{"id":"p5-taught","en":"taught","jp":"teach の過去形","programs":[5]},{"id":"p5-thank-you","en":"thank-you","jp":"感謝［お礼］の","programs":[5]},{"id":"p5-balance","en":"balance","jp":"バランス、つり合い","programs":[5]},{"id":"p5-camera","en":"camera","jp":"カメラ","programs":[5]},{"id":"p5-clean","en":"clean","jp":"きれいな、清潔な","programs":[5]},{"id":"p5-color","en":"color","jp":"色","programs":[5]},{"id":"p5-fashionable","en":"fashionable","jp":"流行の","programs":[5]},{"id":"p5-flash","en":"flash","jp":"（カメラの）フラッシュ","programs":[5]},{"id":"p5-heat","en":"heat","jp":"熱、暑さ","programs":[5]},{"id":"p5-honey","en":"honey","jp":"はちみつ","programs":[5]},{"id":"p5-piece","en":"piece","jp":"1つ、1片","programs":[5]},{"id":"p5-slowly","en":"slowly","jp":"ゆっくり（と）","programs":[5]},{"id":"p5-tidy","en":"tidy","jp":"（部屋が）片づいた、（人が）きちんとした","programs":[5]},{"id":"p5-became","en":"became","jp":"become（〜になる）の過去形","programs":[5]},{"id":"p5-postcard","en":"postcard","jp":"郵便はがき","programs":[5]},{"id":"p5-send","en":"send","jp":"送る","programs":[5]},{"id":"p5-fall-asleep","en":"fall asleep","jp":"眠りに落ちる、寝入る","programs":[5]},{"id":"p5-after-a-while","en":"after a while","jp":"しばらくすると","programs":[5]},{"id":"p5-make-use-of","en":"make use of ~","jp":"〜を利用する、活用する","programs":[5],"answers":["make use of"]},{"id":"p5-take-for-a-walk","en":"take ~ for a walk","jp":"〜を散歩に連れて行く","programs":[5],"answers":["take for a walk"]},{"id":"p5-give-it-a-try","en":"Give it a try.","jp":"ためしてみてください。","programs":[5]},{"id":"p6-high-tech","en":"high-tech","jp":"ハイテクの、高度先端技術の","programs":[6]},{"id":"p6-cafe","en":"cafe","jp":"カフェ、喫茶店","programs":[6]},{"id":"p6-more","en":"more","jp":"もっと","programs":[6]},{"id":"p6-than","en":"than","jp":"〜よりも","programs":[6]},{"id":"p6-germany","en":"Germany","jp":"ドイツ","programs":[6]},{"id":"p6-mt","en":"Mt.","jp":"（山の名の前に置いて）〜山","programs":[6]},{"id":"p6-another","en":"another","jp":"別の、もう1つ［1人］の","programs":[6]},{"id":"p6-leaf","en":"leaf","jp":"葉","programs":[6]},{"id":"p6-leaves","en":"leaves","jp":"leaf（葉）の複数形","programs":[6]},{"id":"p6-lid","en":"lid","jp":"ふた","programs":[6]},{"id":"p6-lotus","en":"lotus","jp":"ハス","programs":[6]},{"id":"p6-raindrop","en":"raindrop","jp":"雨だれ、雨つぶ","programs":[6]},{"id":"p6-stick","en":"stick","jp":"くっつく","programs":[6]},{"id":"p6-wet","en":"wet","jp":"ぬれた、湿った","programs":[6]},{"id":"p6-yogurt","en":"yogurt","jp":"ヨーグルト","programs":[6]},{"id":"p6-stick-to","en":"stick to ~","jp":"〜にくっつく","programs":[6],"answers":["stick to"]},{"id":"p6-most","en":"most","jp":"もっとも","programs":[6]},{"id":"p6-parfait","en":"parfait","jp":"パフェ","programs":[6]},{"id":"p6-london","en":"London","jp":"ロンドン（イギリスの首都）","programs":[6]},{"id":"p6-useful","en":"useful","jp":"役に立つ","programs":[6]},{"id":"p6-boat-shoe","en":"boat shoe","jp":"デッキシューズ","programs":[6]},{"id":"p6-deck","en":"deck","jp":"（船の）甲板、デッキ","programs":[6]},{"id":"p6-develop","en":"develop","jp":"発展させる、開発する","programs":[6]},{"id":"p6-groove","en":"groove","jp":"溝","programs":[6]},{"id":"p6-icy","en":"icy","jp":"氷の（張った）","programs":[6]},{"id":"p6-inspiration","en":"inspiration","jp":"インスピレーション、ひらめき","programs":[6]},{"id":"p6-invention","en":"invention","jp":"発明","programs":[6]},{"id":"p6-move","en":"move","jp":"動く、移動する","programs":[6]},{"id":"p6-non-slip","en":"non-slip","jp":"すべり止めのある","programs":[6]},{"id":"p6-paw","en":"paw","jp":"（動物の）足","programs":[6]},{"id":"p6-pet","en":"pet","jp":"ペット","programs":[6]},{"id":"p6-sail","en":"sail","jp":"航海する","programs":[6]},{"id":"p6-sea","en":"sea","jp":"海","programs":[6]},{"id":"p6-slip","en":"slip","jp":"すべる、すべってころぶ","programs":[6]},{"id":"p6-sole","en":"sole","jp":"足の裏、靴の底","programs":[6]},{"id":"p6-survive","en":"survive","jp":"生き延びる","programs":[6]},{"id":"p6-without","en":"without","jp":"〜なしで、〜せずに","programs":[6]},{"id":"p6-don-t-you","en":"~, don't you?","jp":"〜ですよね。","programs":[6],"answers":["don't you?","don't you"]},{"id":"p6-fall-into","en":"fall into ~","jp":"〜に落ちる","programs":[6],"answers":["fall into"]},{"id":"p6-one-day","en":"one day","jp":"ある日","programs":[6]},{"id":"p6-as","en":"as","jp":"（as 〜 as ...）…と同じくらい〜","programs":[6]},{"id":"p6-stylish","en":"stylish","jp":"流行の、しゃれた","programs":[6]},{"id":"p6-centimeter","en":"centimeter","jp":"センチメートル","programs":[6]},{"id":"p6-tall","en":"tall","jp":"身長［高さ］がある、背が高い","programs":[6]},{"id":"p6-able","en":"able","jp":"できる、能力がある","programs":[6]},{"id":"p6-agriculture","en":"agriculture","jp":"農業","programs":[6]},{"id":"p6-bee","en":"bee","jp":"ハチ、ミツバチ","programs":[6]},{"id":"p6-coin","en":"coin","jp":"硬貨","programs":[6]},{"id":"p6-creature","en":"creature","jp":"生物（植物は含まない）","programs":[6]},{"id":"p6-living","en":"living","jp":"生きている","programs":[6]},{"id":"p6-narrow","en":"narrow","jp":"狭い","programs":[6]},{"id":"p6-paper-clip","en":"paper clip","jp":"紙ばさみ、ペーパークリップ","programs":[6]},{"id":"p6-plant","en":"plant","jp":"植物","programs":[6]},{"id":"p6-pollen","en":"pollen","jp":"花粉","programs":[6]},{"id":"p6-potential","en":"potential","jp":"可能性、潜在能力","programs":[6]},{"id":"p6-quarter","en":"quarter","jp":"アメリカの25セント硬貨","programs":[6]},{"id":"p6-search","en":"search","jp":"捜索、探索","programs":[6]},{"id":"p6-space","en":"space","jp":"空間、場所","programs":[6]},{"id":"p6-air-circulator","en":"air circulator","jp":"サーキュレーター（空気循環装置）","programs":[6]},{"id":"p6-air-conditioner","en":"air conditioner","jp":"エアコン","programs":[6]},{"id":"p6-continue","en":"continue","jp":"続ける、続く","programs":[6]},{"id":"p6-curtain","en":"curtain","jp":"カーテン","programs":[6]},{"id":"p6-eco-friendly","en":"eco-friendly","jp":"環境に配慮した、環境にやさしい","programs":[6]},{"id":"p6-effort","en":"effort","jp":"努力","programs":[6]},{"id":"p6-electricity","en":"electricity","jp":"電気","programs":[6]},{"id":"p6-energy","en":"energy","jp":"エネルギー","programs":[6]},{"id":"p6-fridge","en":"fridge","jp":"冷蔵庫（= refrigerator）","programs":[6]},{"id":"p6-less","en":"less","jp":"little（少ない）の比較級","programs":[6]},{"id":"p6-light","en":"light","jp":"明かり、光","programs":[6]},{"id":"p6-better","en":"better","jp":"good（よい）の比較級","programs":[6]},{"id":"p6-be-able-to","en":"be able to ~","jp":"〜することができる","programs":[6],"answers":["be able to"]},{"id":"p6-turn-off","en":"turn off ~","jp":"〜（テレビなど）を消す、止める","programs":[6],"answers":["turn off"]},{"id":"p6-guinea-pig","en":"guinea pig","jp":"モルモット","programs":[6]},{"id":"p6-made","en":"made","jp":"make の過去形（過去分詞も同形）","programs":[6]},{"id":"p6-relaxing","en":"relaxing","jp":"くつろげる、ほっとする","programs":[6]},{"id":"p6-beef","en":"beef","jp":"牛肉、ビーフ","programs":[6]},{"id":"p6-cloth","en":"cloth","jp":"布、布切れ","programs":[6]},{"id":"p6-mayonnaise","en":"mayonnaise","jp":"マヨネーズ","programs":[6]},{"id":"p6-plastic-bag","en":"plastic bag","jp":"ビニール袋","programs":[6]},{"id":"p6-sauce","en":"sauce","jp":"ソース","programs":[6]},{"id":"p6-soy-sauce","en":"soy sauce","jp":"しょうゆ","programs":[6]},{"id":"p6-square","en":"square","jp":"正方形の、四角い","programs":[6]},{"id":"p6-sugar","en":"sugar","jp":"砂糖","programs":[6]},{"id":"p6-wrap","en":"wrap","jp":"包む、くるむ","programs":[6]},{"id":"p6-a-piece-of","en":"a piece of ~","jp":"1つ［1枚］の〜","programs":[6],"answers":["a piece of"]},{"id":"p6-building","en":"building","jp":"建物、ビルディング","programs":[6]},{"id":"p6-car","en":"car","jp":"車、自動車","programs":[6]},{"id":"p6-cave","en":"cave","jp":"洞くつ、ほら穴","programs":[6]},{"id":"p6-comfortable","en":"comfortable","jp":"心地よい","programs":[6]},{"id":"p6-display","en":"display","jp":"展示、見世物、ディスプレー","programs":[6]},{"id":"p6-escape","en":"escape","jp":"逃げる、のがれる","programs":[6]},{"id":"p6-even","en":"even","jp":"〜でさえ","programs":[6]},{"id":"p6-film","en":"film","jp":"撮影する","programs":[6]},{"id":"p6-handicraft","en":"handicraft","jp":"手工芸（品）","programs":[6]},{"id":"p6-magical","en":"magical","jp":"魔法の、不思議な","programs":[6]},{"id":"p6-material","en":"material","jp":"材料、原料","programs":[6]},{"id":"p6-prefecture","en":"prefecture","jp":"県、都道府県","programs":[6]},{"id":"p6-souvenir","en":"souvenir","jp":"みやげ","programs":[6]},{"id":"p6-stone","en":"stone","jp":"石","programs":[6]},{"id":"p6-above","en":"above","jp":"〜の上（のほう）に［の］","programs":[6]},{"id":"p6-airport","en":"airport","jp":"空港","programs":[6]},{"id":"p6-beyond","en":"beyond","jp":"〜を越えて","programs":[6]},{"id":"p6-border","en":"border","jp":"国境、境界（線）","programs":[6]},{"id":"p6-friendship","en":"friendship","jp":"親交、友情","programs":[6]},{"id":"p6-iran","en":"Iran","jp":"イラン","programs":[6]},{"id":"p6-iraq","en":"Iraq","jp":"イラク","programs":[6]},{"id":"p6-no-fly-zone","en":"no-fly zone","jp":"飛行禁止区域","programs":[6]},{"id":"p6-president","en":"president","jp":"大統領","programs":[6]},{"id":"p6-sent","en":"sent","jp":"send の過去形（過去分詞も同形）","programs":[6]},{"id":"p6-suddenly","en":"suddenly","jp":"突然、急に","programs":[6]},{"id":"p6-turkish","en":"Turkish","jp":"トルコ（人）の／トルコ語","programs":[6]},{"id":"p6-war","en":"war","jp":"戦争","programs":[6]},{"id":"p6-bury","en":"bury","jp":"埋葬する、埋める","programs":[6]},{"id":"p6-chicken","en":"chicken","jp":"ニワトリ、鶏肉","programs":[6]},{"id":"p6-coast","en":"coast","jp":"海岸","programs":[6]},{"id":"p6-dead","en":"dead","jp":"死んでいる","programs":[6]},{"id":"p6-die","en":"die","jp":"死ぬ","programs":[6]},{"id":"p6-fishing","en":"fishing","jp":"漁業","programs":[6]},{"id":"p6-goodwill","en":"goodwill","jp":"親善、好意","programs":[6]},{"id":"p6-however","en":"however","jp":"しかし","programs":[6]},{"id":"p6-left","en":"left","jp":"leave の過去形（過去分詞も同形）","programs":[6]},{"id":"p6-met","en":"met","jp":"meet の過去形（過去分詞も同形）","programs":[6]},{"id":"p6-mission","en":"mission","jp":"使命、任務","programs":[6]},{"id":"p6-nearby","en":"nearby","jp":"近くの","programs":[6]},{"id":"p6-respectfully","en":"respectfully","jp":"うやうやしく、丁重に","programs":[6]},{"id":"p6-sank","en":"sank","jp":"sink（沈む）の過去形","programs":[6]},{"id":"p6-ship","en":"ship","jp":"船","programs":[6]},{"id":"p6-sink","en":"sink","jp":"沈む","programs":[6]},{"id":"p6-survivor","en":"survivor","jp":"生存者","programs":[6]},{"id":"p6-the-dead","en":"the dead","jp":"死者","programs":[6]},{"id":"p6-turkey","en":"Turkey","jp":"トルコ","programs":[6]},{"id":"p6-typhoon","en":"typhoon","jp":"台風","programs":[6]},{"id":"p6-understand","en":"understand","jp":"わかる、理解する","programs":[6]},{"id":"p6-village","en":"village","jp":"村","programs":[6]},{"id":"p6-ambassador","en":"ambassador","jp":"大使","programs":[6]},{"id":"p6-between","en":"between","jp":"〜の間の","programs":[6]},{"id":"p6-earthquake","en":"earthquake","jp":"地震","programs":[6]},{"id":"p6-eastern","en":"eastern","jp":"東部の、東の","programs":[6]},{"id":"p6-flew","en":"flew","jp":"fly（飛ぶ）の過去形","programs":[6]},{"id":"p6-former","en":"former","jp":"前の、元の","programs":[6]},{"id":"p6-accident","en":"accident","jp":"事故","programs":[6]},{"id":"p6-return","en":"return","jp":"帰る、もどる、もどす","programs":[6]},{"id":"p6-worker","en":"worker","jp":"仕事［勉強］をする人、労働者","programs":[6]},{"id":"p6-at-war","en":"at war","jp":"戦争中で","programs":[6]},{"id":"p6-one-after-another","en":"one after another","jp":"次々と","programs":[6]},{"id":"p6-run-short","en":"run short","jp":"不足する","programs":[6]},{"id":"p6-shoot-down","en":"shoot down ~","jp":"〜を撃ち落とす","programs":[6],"answers":["shoot down"]},{"id":"p6-more-than","en":"more than ~","jp":"〜より多い","programs":[6],"answers":["more than"]},{"id":"p6-on-the-way-back-to","en":"on the way (back) to ~","jp":"〜へ行く［もどる］途中で","programs":[6],"answers":["on the way to","on the way back to"]},{"id":"p6-each-other","en":"each other","jp":"おたがいに［を］","programs":[6]}];
 
@@ -80,8 +80,15 @@ function load(){
   try{const raw=JSON.parse(localStorage.getItem(STORE_KEY));const migrated=migrate(raw);localStorage.setItem(STORE_KEY,JSON.stringify(migrated));return migrated;}
   catch(_){return fresh();}
 }
-let state=load();
-function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(state));return true;}catch(_){notify('保存できません。ブラウザの保存設定を確認し、バックアップを取ってください。');return false;}}
+let liveState=load();
+let state=liveState;
+let testMode=false;
+let testState=null;
+function persist(){
+  // TEST MODEでは本番localStorageへ一切書き込まない。
+  if(testMode)return true;
+  try{liveState=state;localStorage.setItem(STORE_KEY,JSON.stringify(liveState));return true;}catch(_){notify('保存できません。ブラウザの保存設定を確認し、バックアップを取ってください。');return false;}
+}
 let session=null;
 const el=id=>document.getElementById(id);
 const today=()=>dateStr();
@@ -150,57 +157,102 @@ function renderAdventure(){
     const label=document.createElement('small');label.textContent=area.name;node.append(dot,label);track.append(node);
   });
   el('map-next').textContent=mi.next?`次の場所「${mi.next.name}」まで、あと${Math.max(0,mi.next.crowns-crowns)}王冠。`:`P4・5・6、286語。ここまで来ました。`;
-  el('avatar-caption').textContent=crowns>=255?'本番へ向かう冒険者':crowns>=70?'街を歩いてきた冒険者':'街の冒険者';
+  el('avatar-caption').textContent=crowns>=255?'本番へ向かう冒険少年':crowns>=70?'街を歩いてきた少年':'街の冒険少年';
 }
 function drawAvatar(gear){
   const canvas=el('avatar-canvas'),ctx=canvas?.getContext?.('2d');if(!ctx)return;
   ctx.clearRect(0,0,canvas.width,canvas.height);ctx.imageSmoothingEnabled=false;
-  const S=4,px=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(x*S,y*S,w*S,h*S);};
+  const S=4,px=(x,y,w,h,c)=>{ctx.fillStyle=c;ctx.fillRect(Math.round(x*S),Math.round(y*S),Math.round(w*S),Math.round(h*S));};
   const outfitTier=gear.outfit.tier,shoeTier=gear.shoes.tier,shieldTier=gear.shield.tier,swordTier=gear.sword.tier;
+
+  // 背景：少しワクワクする町の外れ。MOTHER2風に着想を得たオリジナルのドット背景。
+  px(0,0,45,26,'#eef8ff');
+  px(0,26,45,8,'#d9f1ff');
+  px(0,34,45,8,'#b7e39c');
+  px(0,42,45,6,'#98ca78');
+  px(6,23,10,8,'#b9d7ef');px(7,24,8,6,'#dbeefb');px(9,20,4,4,'#c65d4d');
+  px(31,24,8,6,'#e7e6dd');px(32,25,6,5,'#f8f3ea');px(31,22,8,3,'#7ea4c9');
+  px(20,33,10,3,'#c5b49a');px(19,36,12,2,'#b49d7d');
+  px(12,42,20,2,'rgba(0,0,0,.12)');
+
   // 影
-  px(13,43,19,2,'rgba(35,49,72,.13)');px(16,42,13,1,'rgba(35,49,72,.10)');
-  // リュック：町の少年らしさを残す
-  px(11,20,5,15,'#4d6171');px(10,23,2,9,'#344858');
+  px(15,42,15,2,'rgba(31,42,70,.18)');
+
+  // 少年の体（少しネスっぽい元気さだがオリジナル）
   // 脚
-  px(18,31,5,9,'#33465d');px(25,31,5,9,'#33465d');
+  px(18,30,4,8,'#29436d');px(24,30,4,8,'#29436d');
+  px(19,38,3,2,'#23385d');px(24,38,3,2,'#23385d');
+
   // 靴：STEP1
-  const shoeColors=['#5c6570','#526b78','#3d7080','#32677a','#28586a','#1f4c61','#24445a'];
-  const sc=shoeColors[shoeTier-1];
-  px(16,39,8,3,sc);px(25,39,8,3,sc);px(16,41,9,2,'#1d2e3d');px(25,41,9,2,'#1d2e3d');
-  if(shoeTier>=4){px(17,37,6,2,sc);px(26,37,6,2,sc);} if(shoeTier>=6){px(18,38,1,1,'#d9c37a');px(28,38,1,1,'#d9c37a');}
-  // 胴体・服：王冠
-  const outfitColors=['#4b88a2','#4a7e9d','#3e7695','#386c89','#315e79','#2a526d','#244860'];
-  const oc=outfitColors[outfitTier-1];
-  px(15,18,17,14,oc);px(14,21,3,9,oc);px(31,21,3,9,oc);
-  px(20,18,7,14,outfitTier>=6?'#5d7188':'#e8edf1');
-  px(20,19,7,3,outfitTier>=5?'#c5a85c':'#dfe7ec');
-  if(outfitTier>=3){px(15,19,2,4,'#c7d5df');px(31,19,2,4,'#c7d5df');}
-  if(outfitTier>=4){px(13,19,4,3,'#677f91');px(31,19,4,3,'#677f91');}
-  if(outfitTier>=5){px(18,27,12,3,'#52697e');}
-  if(outfitTier>=7){px(14,17,20,2,'#c1a25e');px(23,22,2,2,'#e6d18f');}
-  // 首と頭
-  px(22,15,5,3,'#e3ad82');px(17,6,15,11,'#efbd91');
-  // 髪（固有キャラに寄せない、シンプルな街の少年）
-  px(16,5,17,4,'#263443');px(17,3,13,3,'#263443');px(15,7,4,6,'#263443');px(30,7,3,5,'#263443');
-  px(19,4,3,2,'#354657');px(27,4,2,2,'#354657');
-  // 顔
-  px(20,10,1,1,'#23303d');px(28,10,1,1,'#23303d');px(24,13,2,1,'#9b6553');
+  const shoeMain=['#56616d','#496b76','#377788','#2d8192','#268a9c','#1f93aa','#1b9ab5'][shoeTier-1];
+  const shoeAccent=['#3c4652','#39505a','#2c5c68','#245f70','#1d6b7d','#176f86','#0f7a93'][shoeTier-1];
+  px(16,39,7,3,shoeMain);px(24,39,7,3,shoeMain);
+  px(16,41,8,1,shoeAccent);px(24,41,8,1,shoeAccent);
+  if(shoeTier>=3){px(17,38,5,1,'#fff2cf');px(25,38,5,1,'#fff2cf');}
+  if(shoeTier>=5){px(18,39,1,1,'#ffffff');px(27,39,1,1,'#ffffff');}
+  if(shoeTier>=7){px(15,39,1,2,'#ffd45b');px(31,39,1,2,'#ffd45b');}
+
+  // 胴体：基本はボーダーシャツ、王冠で服が少し立派になる
+  const shirtBlue=['#6a98cf','#5d8fc8','#4e86c2','#457db9','#3a74ac','#31689d','#285d90'][outfitTier-1];
+  const stripe=['#f8dc59','#f4d34e','#f0cc49','#ecc140','#e7b73d','#e1ad37','#d9a130'][outfitTier-1];
+  px(16,18,14,11,shirtBlue);
+  px(16,20,14,2,stripe);px(16,24,14,2,stripe);
+  // 袖
+  px(13,20,3,8,shirtBlue);px(30,20,3,8,shirtBlue);
+  // 体の成長による上着・えり・前開き
+  if(outfitTier>=3){px(15,18,2,11,'#7fb0dd');px(29,18,2,11,'#7fb0dd');}
+  if(outfitTier>=4){px(19,18,8,2,'#f4f5ef');px(21,20,4,9,'#f4f5ef');}
+  if(outfitTier>=5){px(18,28,10,2,'#355273');}
+  if(outfitTier>=6){px(18,17,10,2,'#d4c18e');}
+  if(outfitTier>=7){px(15,17,16,1,'#f4e19e');px(22,18,2,2,'#fef5d6');}
+
+  // 首・顔
+  px(21,15,4,2,'#f0b48b');
+  px(17,8,13,8,'#f8c59d');
+  // 耳
+  px(16,10,1,3,'#f0b48b');px(30,10,1,3,'#f0b48b');
+
+  // 帽子と髪
+  px(17,5,12,2,'#c94742');px(20,3,8,2,'#d85a54');px(16,7,15,2,'#28324c');
+  px(15,8,3,3,'#28324c');px(29,8,2,3,'#28324c');
+  px(27,5,4,2,'#27488d'); // つば
+  if(outfitTier>=5){px(22,3,3,1,'#ffe89a');}
+
+  // 顔パーツ
+  px(20,11,1,1,'#2c2d35');px(26,11,1,1,'#2c2d35');
+  px(23,13,2,1,'#a7675d');
+  px(22,14,4,1,'#d9897f');
+
   // 腕・手
-  px(12,22,3,8,oc);px(34,22,3,8,oc);px(11,29,4,3,'#efbd91');px(34,29,4,3,'#efbd91');
-  // 盾：STEP2（左）
-  const shieldColors=['#8a704f','#8b6b49','#93664a','#747d81','#5e727e','#4d6575','#3e596c'];
-  const sh=shieldColors[shieldTier-1],sw=5+Math.min(3,Math.floor((shieldTier-1)/2)),hh=7+Math.min(4,shieldTier-1);
-  px(7-sw/2,22,sw,hh,sh);px(7-sw/2+1,23,Math.max(1,sw-2),Math.max(1,hh-2),shieldTier>=4?'#aebdc5':'#b99461');
-  if(shieldTier>=5)px(6,25,2,2,'#c8a958');if(shieldTier>=7){px(5,23,1,7,'#e2c977');px(9,23,1,7,'#e2c977');}
-  // 剣：STEP3（右）。段階が上がるほど長く、金属感が増える。
-  const blade=['#815b3d','#9a7149','#b67c52','#a7b2bb','#c1cbd2','#d8e2e8','#eef4f6'][swordTier-1];
-  const len=5+swordTier;
-  for(let i=0;i<len;i++)px(38+i,28-i,2,2,blade);
-  px(37,29,5,2,'#6c4c32');px(38,31,2,3,'#674737');
-  if(swordTier>=4)for(let i=1;i<len-1;i+=2)px(39+i,27-i,1,1,'#f4f7f8');
-  if(swordTier>=7)px(46,20,2,2,'#d7b64f');
-  // ピクセル枠
-  ctx.strokeStyle='rgba(23,39,66,.12)';ctx.lineWidth=1;ctx.strokeRect(.5,.5,canvas.width-1,canvas.height-1);
+  px(12,22,3,8,'#f8c59d');px(30,22,3,8,'#f8c59d');
+  px(11,21,2,6,shirtBlue);px(33,21,2,6,shirtBlue);
+  if(outfitTier>=4){px(10,22,1,4,'#edf3f9');px(35,22,1,4,'#edf3f9');}
+
+  // リュック
+  px(14,19,2,10,'#6a5437');px(15,19,1,10,'#9e7b4e');
+
+  // 盾：STEP2（左手）
+  const shieldEdge=['#71543c','#7d5b3f','#8d6646','#8b8fa0','#7689a0','#617c94','#54779d'][shieldTier-1];
+  const shieldCore=['#c79d5d','#d4ae73','#e1bf87','#dde8f0','#cfdeea','#c2d6e6','#b9d7ea'][shieldTier-1];
+  const shW=[4,5,5,6,6,7,7][shieldTier-1],shH=[6,7,7,8,8,9,9][shieldTier-1];
+  const sx=7,sy=23;
+  px(sx,sy,shW,shH,shieldEdge);px(sx+1,sy+1,Math.max(2,shW-2),Math.max(2,shH-2),shieldCore);
+  if(shieldTier>=4){px(sx+2,sy+2,1,Math.max(2,shH-4),'#ffffff');}
+  if(shieldTier>=6){px(sx+Math.max(2,shW-3),sy+2,1,Math.max(2,shH-4),'#f5f9ff');}
+  if(shieldTier>=7){px(sx+2,sy+3,shW-4,1,'#ffe07d');}
+
+  // 剣：STEP3（右手）
+  const blade=['#7b5d42','#8d6b49','#9f7750','#bcc4cb','#cfd8df','#dfe7ed','#edf5fb'][swordTier-1];
+  const bladeHi=['#9b7a57','#b38a5c','#cc995d','#f0f4f7','#fbfeff','#ffffff','#fff9d0'][swordTier-1];
+  const len=[5,6,7,8,9,10,11][swordTier-1];
+  for(let i=0;i<len;i++)px(36+i,29-i,2,2,blade);
+  for(let i=1;i<len-1;i+=2)px(37+i,28-i,1,1,bladeHi);
+  px(35,30,4,2,'#6b4b32');px(36,32,2,2,'#5b3f2c');
+  if(swordTier>=5){px(35,29,1,4,'#d7c17b');}
+  if(swordTier>=7){px(45,20,2,2,'#ffd85a');}
+
+  // 細い輪郭
+  ctx.strokeStyle='rgba(27,33,53,.10)';ctx.lineWidth=1;ctx.strokeRect(.5,.5,canvas.width-1,canvas.height-1);
 }
 
 function sortDue(list){return [...list].sort((a,b)=>{const ar=state.records[a.id],br=state.records[b.id];if(ar.inProgress!==br.inProgress)return ar.inProgress?-1:1;const d=ar.due.localeCompare(br.due);if(d!==0)return d;return ar.attempts-br.attempts;});}
@@ -260,11 +312,11 @@ function renderHome(){
   el('unlocked-stat').textContent=`${unlocked().length}語`;el('master-stat').textContent=`${focusMasterCount()} / ${allFocusWords().length}`;
   const preview=sessionWords(false),lockedFocus=lockedFocusWords().length,available=preview.length||lockedFocus>0;el('due-stat').textContent=available?`${Math.min(5,Math.max(preview.length,lockedFocus?5:0))}語`:'0語';
   const focusDoneToday=new Set(state.history.filter(h=>h.day===today()).map(h=>wordById(h.id)).filter(Boolean).filter(isFocusWord).map(w=>w.id)).size;
-  el('start-btn').disabled=!available;el('start-btn').textContent=!available?'今日の修行は終了 ✓':focusDoneToday>=4?'余力があれば、もう5語 →':'修行をはじめる →';
+  el('start-btn').disabled=testMode||!available;el('start-btn').textContent=testMode?'TEST MODEでは学習しません':!available?'今日の修行は終了 ✓':focusDoneToday>=4?'余力があれば、もう5語 →':'修行をはじめる →';
   const pf=preview.filter(isFocusWord).length,pb=preview.length-pf,stats=focusStats().map(x=>`P${x.p} ${x.unlocked}/${x.total}`).join(' ・ ');
-  el('home-message').textContent=available?(focusDoneToday>=4?'今日の基本分はクリア。ここで終了してOKです。追加するなら、次もPROGRAM 4・5・6を中心に5語だけ。':`テスト対策モード：PROGRAM 4・5・6を重点出題。最初は同じ語を1→2→3、慣れた語はSTAGEを混ぜて復習します。${preview.length?`（今の候補 TEST ${pf} / 基礎 ${pb}）`:''}`):'今日の分は終了！ 追加しなくてもOK。';
+  el('home-message').textContent=testMode?'進捗シミュレーション中です。装備・レベル・マップだけを確認できます。本番データは変更されません。':available?(focusDoneToday>=4?'今日の基本分はクリア。ここで終了してOKです。追加するなら、次もPROGRAM 4・5・6を中心に5語だけ。':`テスト対策モード：PROGRAM 4・5・6を重点出題。最初は同じ語を1→2→3、慣れた語はSTAGEを混ぜて復習します。${preview.length?`（今の候補 TEST ${pf} / 基礎 ${pb}）`:''}`):'今日の分は終了！ 追加しなくてもOK。';
   if(el('focus-status'))el('focus-status').textContent=`TEST RANGE ON　PROGRAM 4・5・6　｜　${stats}`;
-  const left=lockedFocusWords().length;el('unlock-btn').disabled=left===0;el('unlock-btn').textContent=left?`テスト範囲を${Math.min(5,left)}語追加する`:'P4・P5・P6をすべて図鑑に登録済み';
+  const left=lockedFocusWords().length;el('unlock-btn').disabled=testMode||left===0;el('unlock-btn').textContent=testMode?'TEST MODEでは追加しません':left?`テスト範囲を${Math.min(5,left)}語追加する`:'P4・P5・P6をすべて図鑑に登録済み';
   renderAdventure();
 }
 function renderLibrary(){
@@ -275,12 +327,61 @@ function renderLibrary(){
   });
 }
 function renderData(){
-  const list=state.history.filter(x=>x.day===today());el('today-summary').textContent=`挑戦 ${list.length}回 / 今日の獲得 ${dailyEarned()} EXP（上限なし）`;
-  const fs=focusStats().map(x=>`P${x.p} ${x.unlocked}/${x.total}`).join(' ・ ');el('overall-summary').textContent=`累計 ${state.xp} EXP / 図鑑 ${unlocked().length}語 / MASTER ${totalMaster()}語 / テスト範囲 ${fs} / 過去の教材で読んだ記録 ${state.legacyReadingWords||0} words`;
-  const snapshotOk=state.daySnapshot?.day===today();el('reset-today').disabled=!snapshotOk;el('reset-today-note').textContent=snapshotOk?'この端末の今日のテストプレイを、v1.3開始時点まで戻せます。':'今日の開始スナップショットがありません。次の学習から使えます。';
+  const list=state.history.filter(x=>x.day===today());el('today-summary').textContent=testMode?'TEST MODE中：本番の履歴は変更していません。':`挑戦 ${list.length}回 / 今日の獲得 ${dailyEarned()} EXP（上限なし）`;
+  const fs=focusStats().map(x=>`P${x.p} ${x.unlocked}/${x.total}`).join(' ・ ');el('overall-summary').textContent=testMode?`シミュレーション表示 / Step1 ${focusStageCount(1)} / Step2 ${focusStageCount(2)} / Step3 ${focusStageCount(3)} / 王冠 ${focusMasterCount()} / 286`:`累計 ${state.xp} EXP / 図鑑 ${unlocked().length}語 / MASTER ${totalMaster()}語 / テスト範囲 ${fs} / 過去の教材で読んだ記録 ${state.legacyReadingWords||0} words`;
+  const snapshotOk=!testMode&&state.daySnapshot?.day===today();el('reset-today').disabled=!snapshotOk;el('reset-progress').disabled=testMode;el('reset-all').disabled=testMode;el('reset-today-note').textContent=testMode?'TEST MODE中は本番リセット機能を停止しています。':snapshotOk?'この端末の今日のテストプレイを、v1.3開始時点まで戻せます。':'今日の開始スナップショットがありません。次の学習から使えます。';
+  el('export-json').disabled=testMode;el('export-csv').disabled=testMode;el('import-file').disabled=testMode;
+  renderTestControls();
 }
-function unlockFive(){ensureDaySnapshot();const items=[];while(items.length<5){const w=unlockNextFocus();if(!w)break;items.push(w);}persist();renderHome();notify(items.length?`テスト範囲から${items.length}語を追加しました。今日はやらなくても大丈夫。`:'P4・P5・P6はすべて登録済みです。');}
+
+function clampTestCount(value){return Math.max(0,Math.min(allFocusWords().length,Math.round(Number(value)||0)));}
+function setTestInputs(s1,s2,s3,crowns){
+  if(el('test-step1'))el('test-step1').value=clampTestCount(s1);
+  if(el('test-step2'))el('test-step2').value=clampTestCount(s2);
+  if(el('test-step3'))el('test-step3').value=clampTestCount(s3);
+  if(el('test-crowns'))el('test-crowns').value=clampTestCount(crowns);
+}
+function currentTestCounts(){return {s1:focusStageCount(1),s2:focusStageCount(2),s3:focusStageCount(3),crowns:focusMasterCount()};}
+function normalizeTestCounts(s1,s2,s3,crowns){
+  crowns=clampTestCount(crowns);s3=Math.max(clampTestCount(s3),crowns);s2=Math.max(clampTestCount(s2),s3);s1=Math.max(clampTestCount(s1),s2);return {s1,s2,s3,crowns};
+}
+function applyTestProgress(rawS1,rawS2,rawS3,rawCrowns){
+  if(!testMode)return;
+  const c=normalizeTestCounts(rawS1,rawS2,rawS3,rawCrowns),focus=allFocusWords();
+  focus.forEach((w,i)=>{
+    const r=state.records[w.id];r.unlocked=true;r.attempts=0;r.correct=0;r.lastAttempt=null;r.inProgress=false;r.misspellCount=0;r.reviewAttempts=0;r.due=addDays(today(),30);r.mastered=false;r.streak=0;r.stage=1;
+    if(i<c.s1)r.stage=2;
+    if(i<c.s2)r.stage=3;
+    if(i<c.s3){r.stage=3;r.streak=1;}
+    if(i<c.crowns){r.stage=3;r.streak=4;r.mastered=true;}
+  });
+  setTestInputs(c.s1,c.s2,c.s3,c.crowns);renderHome();renderData();updateTestReadout();
+}
+function renderTestControls(){
+  if(!el('test-mode-start'))return;
+  el('test-mode-start').hidden=testMode;el('test-mode-controls').hidden=!testMode;el('test-mode-banner').hidden=!testMode;document.body.classList.toggle('test-mode',testMode);
+  if(testMode){const c=currentTestCounts();setTestInputs(c.s1,c.s2,c.s3,c.crowns);updateTestReadout();}
+}
+function updateTestReadout(){
+  if(!testMode||!el('test-readout'))return;
+  const g=allEquipment(),li=levelInfo(),mi=mapInfo();
+  el('test-readout').textContent=`👟 ${g.shoes.name} / 🛡 ${g.shield.name} / ⚔ ${g.sword.name} / 👕 ${g.outfit.name}　｜　Lv.${li.level}　｜　現在地：${mi.current.name}`;
+}
+function enterTestMode(){
+  if(testMode)return;
+  liveState=state;testState=deepClone(liveState);state=testState;testMode=true;session=null;
+  const c=currentTestCounts();setTestInputs(c.s1,c.s2,c.s3,c.crowns);renderTestControls();show('home');notify('TEST MODEを開始しました。本番データは変更されません。');
+}
+function exitTestMode(){
+  if(!testMode)return;
+  state=liveState;testState=null;testMode=false;session=null;renderTestControls();show('home');notify('TEST MODEを終了しました。本番データに戻りました。');
+}
+function openTestControls(){show('data');const d=el('dev-tools');if(d)d.open=true;setTimeout(()=>el('test-mode-controls')?.scrollIntoView({behavior:'smooth',block:'center'}),50);}
+function applyTestInputs(){if(!testMode)return;applyTestProgress(el('test-step1').value,el('test-step2').value,el('test-step3').value,el('test-crowns').value);}
+
+function unlockFive(){if(testMode){notify('TEST MODEでは本番の単語追加をしません。');return;}ensureDaySnapshot();const items=[];while(items.length<5){const w=unlockNextFocus();if(!w)break;items.push(w);}persist();renderHome();notify(items.length?`テスト範囲から${items.length}語を追加しました。今日はやらなくても大丈夫。`:'P4・P5・P6はすべて登録済みです。');}
 function start(){
+  if(testMode){notify('TEST MODEでは学習記録を変更しません。');return;}
   ensureDaySnapshot();const words=sessionWords(true);if(!words.length){renderHome();return;}
   session={tasks:buildTasks(words),index:0,earned:0,success:0,review:0,finished:false,repeatCurrent:false,writeSuggested:new Set()};renderQuestion();show('practice');
 }
@@ -359,21 +460,24 @@ function advance(){
   session.index++;if(session.index>=session.tasks.length){renderResult();show('result');}else renderQuestion();
 }
 function download(name,content,mime){const blob=new Blob([content],{type:mime});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
-function exportJson(){download(`english-quest-backup-${today()}.json`,JSON.stringify(state,null,2),'application/json');notify('バックアップを保存しました。ファイルを安全な場所に保管してください。');}
+function exportJson(){if(testMode){notify('TEST MODEを終了してから本番バックアップを保存してください。');return;}download(`english-quest-backup-${today()}.json`,JSON.stringify(state,null,2),'application/json');notify('バックアップを保存しました。ファイルを安全な場所に保管してください。');}
 function csvCell(s){const v=String(s??'');return '"'+v.replace(/"/g,'""')+'"';}
-function exportCsv(){const rows=[['date','word','japanese','program','stage_at_attempt','mode','correct','xp_awarded','next_due']];state.history.forEach(h=>{const w=wordById(h.id);if(w)rows.push([h.day,w.en,w.jp,programLabel(w),h.stage,h.mode||'',h.correct?'yes':'no',h.xp,h.nextDue]);});download(`english-quest-log-${today()}.csv`,'\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSVを保存しました。このチャットに添付できます。');}
-async function importJson(event){const file=event.target.files?.[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('large');const raw=JSON.parse(await file.text()),obj=migrate(raw);if(!confirm(`記録を読み込むと、この端末の今の履歴は置き換わります。読み込むデータ：${obj.xp} EXP。続けますか？`))return;state=obj;persist();renderHome();show('home');notify('バックアップを読み込みました。');}catch(e){notify('読み込めませんでした。English QuestのバックアップJSONを選んでください。');}finally{event.target.value='';}}
+function exportCsv(){if(testMode){notify('TEST MODEを終了してからCSVを保存してください。');return;}const rows=[['date','word','japanese','program','stage_at_attempt','mode','correct','xp_awarded','next_due']];state.history.forEach(h=>{const w=wordById(h.id);if(w)rows.push([h.day,w.en,w.jp,programLabel(w),h.stage,h.mode||'',h.correct?'yes':'no',h.xp,h.nextDue]);});download(`english-quest-log-${today()}.csv`,'\uFEFF'+rows.map(r=>r.map(csvCell).join(',')).join('\r\n'),'text/csv;charset=utf-8');notify('CSVを保存しました。このチャットに添付できます。');}
+async function importJson(event){if(testMode){notify('TEST MODEを終了してからバックアップを読み込んでください。');event.target.value='';return;}const file=event.target.files?.[0];if(!file)return;try{if(file.size>5_000_000)throw new Error('large');const raw=JSON.parse(await file.text()),obj=migrate(raw);if(!confirm(`記録を読み込むと、この端末の今の履歴は置き換わります。読み込むデータ：${obj.xp} EXP。続けますか？`))return;state=obj;liveState=state;persist();renderHome();show('home');notify('バックアップを読み込みました。');}catch(e){notify('読み込めませんでした。English QuestのバックアップJSONを選んでください。');}finally{event.target.value='';}}
 function resetToday(){
+  if(testMode){notify('TEST MODE中は本番データをリセットできません。');return;}
   const snap=state.daySnapshot;if(!snap||snap.day!==today()){notify('今日の開始スナップショットがありません。');return;}
   if(!confirm('この端末の「今日の学習」を開始時点まで戻します。今日獲得したEXP・Stage進行・今日追加した語が戻ります。よろしいですか？'))return;
   state.xp=snap.xp;state.records=deepClone(snap.records);state.history=state.history.slice(0,snap.historyLength);state.daySnapshot={day:today(),xp:snap.xp,historyLength:snap.historyLength,records:deepClone(snap.records)};persist();renderData();renderHome();notify('今日の学習をリセットしました。');
 }
 function resetProgress(){
+  if(testMode){notify('TEST MODE中は本番データをリセットできません。');return;}
   if(!confirm('学習進捗を初期状態へ戻します。EXP、Stage、復習予定、MASTER記録がリセットされます。この端末だけが対象です。'))return;
   const typed=prompt('誤操作防止のため RESET と入力してください。');if(typed!=='RESET'){notify('リセットを中止しました。');return;}
-  const keepReading=state.legacyReadingWords||131;state=fresh();state.legacyReadingWords=keepReading;persist();show('home');notify('学習進捗を初期化しました。');
+  const keepReading=state.legacyReadingWords||131;state=fresh();liveState=state;state.legacyReadingWords=keepReading;persist();show('home');notify('学習進捗を初期化しました。');
 }
 function fullReset(){
+  if(testMode){notify('TEST MODE中は本番データをリセットできません。');return;}
   if(!confirm('完全初期化します。念のため、現在のバックアップJSONを先に保存します。続けますか？'))return;exportJson();
   const typed=prompt('完全初期化するには FULL RESET と入力してください。');if(typed!=='FULL RESET'){notify('完全初期化を中止しました。');return;}
   localStorage.removeItem(STORE_KEY);location.reload();
@@ -384,7 +488,9 @@ function init(){
   el('start-btn').addEventListener('click',start);el('unlock-btn').addEventListener('click',unlockFive);el('reset-today-btn').addEventListener('click',()=>show('data'));el('back-btn').addEventListener('click',()=>show('home'));el('next-btn').addEventListener('click',advance);el('result-home-btn').addEventListener('click',()=>show('home'));el('result-more-btn').addEventListener('click',start);
   document.querySelectorAll('.nav button').forEach(btn=>btn.addEventListener('click',()=>show(btn.dataset.view)));el('export-json').addEventListener('click',exportJson);el('export-csv').addEventListener('click',exportCsv);el('import-file').addEventListener('change',importJson);
   el('reset-today').addEventListener('click',resetToday);el('reset-progress').addEventListener('click',resetProgress);el('reset-all').addEventListener('click',fullReset);
-  renderHome();if('speechSynthesis' in window)window.speechSynthesis.getVoices();
-  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./service-worker.js?v=1.4p456').catch(()=>{});
+  el('test-mode-start').addEventListener('click',enterTestMode);el('test-mode-exit').addEventListener('click',exitTestMode);el('test-mode-exit-top').addEventListener('click',exitTestMode);el('test-mode-open-controls').addEventListener('click',openTestControls);el('test-apply').addEventListener('click',applyTestInputs);
+  document.querySelectorAll('#test-presets button').forEach(btn=>btn.addEventListener('click',()=>{if(!testMode)return;const n=Number(btn.dataset.count)||0;applyTestProgress(n,n,n,n);}));
+  renderTestControls();renderHome();if('speechSynthesis' in window)window.speechSynthesis.getVoices();
+  if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost'))navigator.serviceWorker.register('./service-worker.js?v=1.4.1p456').catch(()=>{});
 }
 init();
