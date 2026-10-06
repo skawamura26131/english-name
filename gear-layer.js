@@ -1,13 +1,17 @@
 'use strict';
 
 /*
- * ENGLISH QUEST v1.6.1 — equipment image layer
+ * ENGLISH QUEST v1.6.2 — equipment image layer
  *
  * Existing learning logic in app.js is unchanged.
  * Reads the equipment tier already calculated by app.js and overlays
  * the matching transparent PNG on the fixed hero base.
  *
  * tier 1..7 -> 0, 5, 15, 30, 50, 75, 100 %
+ *
+ * v1.6.2:
+ * - Move all seven sword stages toward viewer-left with one shared offset.
+ * - Allow the sword to extend slightly outside the hero image frame.
  */
 
 (() => {
@@ -47,6 +51,16 @@
         display:none !important;
       }
 
+      /*
+       * The sword is intentionally allowed to protrude a little outside
+       * the portrait frame. The whole 256x256 sword layer is shifted left,
+       * so all seven sword stages keep the same relative alignment.
+       */
+      .avatar-wrap,
+      .hero-visual{
+        overflow:visible !important;
+      }
+
       .hero-sprite-stack{
         position:relative;
         width:min(100%,220px);
@@ -71,7 +85,13 @@
       .hero-sprite-stack .hero-outfit-layer{z-index:2}
       .hero-sprite-stack .hero-shoes-layer{z-index:3}
       .hero-sprite-stack .hero-shield-layer{z-index:4}
-      .hero-sprite-stack .hero-sword-layer{z-index:5}
+
+      /* Shared position correction for sword_0 ... sword_100 */
+      .hero-sprite-stack .hero-sword-layer{
+        z-index:5;
+        transform:translateX(-16%) !important;
+      }
+
       .hero-sprite-stack .hero-sprite[hidden]{display:none !important}
 
       @media(max-width:680px){
