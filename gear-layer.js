@@ -1,12 +1,11 @@
 'use strict';
 
 /*
- * ENGLISH QUEST v1.6 — equipment image layer
+ * ENGLISH QUEST v1.6.1 — equipment image layer
  *
- * This file does NOT change the learning logic in app.js.
- * It reads the equipment tier already calculated by the app
- * (data-tier="1" ... "7" on each gear card) and displays the matching
- * transparent PNG on top of the fixed hero base.
+ * Existing learning logic in app.js is unchanged.
+ * Reads the equipment tier already calculated by app.js and overlays
+ * the matching transparent PNG on the fixed hero base.
  *
  * tier 1..7 -> 0, 5, 15, 30, 50, 75, 100 %
  */
@@ -44,6 +43,10 @@
     const style = document.createElement('style');
     style.id = 'gear-layer-style';
     style.textContent = `
+      .hero-gear-badges{
+        display:none !important;
+      }
+
       .hero-sprite-stack{
         position:relative;
         width:min(100%,220px);
@@ -51,6 +54,7 @@
         display:block;
         flex:0 0 auto;
       }
+
       .hero-sprite-stack .hero-sprite{
         position:absolute !important;
         inset:0 !important;
@@ -62,12 +66,14 @@
         image-rendering:pixelated !important;
         pointer-events:none;
       }
+
       .hero-sprite-stack .hero-base{z-index:1}
       .hero-sprite-stack .hero-outfit-layer{z-index:2}
       .hero-sprite-stack .hero-shoes-layer{z-index:3}
       .hero-sprite-stack .hero-shield-layer{z-index:4}
       .hero-sprite-stack .hero-sword-layer{z-index:5}
       .hero-sprite-stack .hero-sprite[hidden]{display:none !important}
+
       @media(max-width:680px){
         .hero-sprite-stack{width:min(100%,205px)}
       }
@@ -119,6 +125,7 @@
       base.dataset.usingFallback = '1';
       base.src = fallback;
     };
+
     base.src = ASSETS.hero;
 
     return stack;
