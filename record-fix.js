@@ -1,7 +1,7 @@
 'use strict';
 
 /*
- * ENGLISH QUEST — RECORD FIX v1.7.1
+ * ENGLISH QUEST — RECORD FIX v1.7.2
  * Load AFTER player-layer.js but BEFORE app.js.
  *
  * The original app.js migrate() rebuilds records from the original WORDS
@@ -109,13 +109,15 @@
     savedBeforeLoad = null;
 
     const version = document.querySelector('.topbar .version');
-    if (version) version.textContent = 'v1.7.1 · FAMILY DATA';
+    if (version) version.textContent = 'v1.7.2 · FAMILY DATA';
   }
 
-  // All defer scripts (including content-packs.js) execute before this event.
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeFix, { once: true });
-  } else {
+  // A deferred script runs while readyState may already be 'interactive'.
+  // 'interactive' is NOT safe here: app.js/content-packs.js may run later.
+  // Wait for DOMContentLoaded, which fires after all deferred scripts.
+  if (document.readyState === 'complete') {
     initializeFix();
+  } else {
+    document.addEventListener('DOMContentLoaded', initializeFix, { once: true });
   }
 })();
