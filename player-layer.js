@@ -1,17 +1,22 @@
 'use strict';
 
 /*
- * ENGLISH QUEST — FAMILY / PLAYER v1.0
+ * ENGLISH QUEST — FAMILY / PLAYER v1.0.1 SAFE SWITCH HOTFIX
  *
  * IMPORTANT:
  * This script must load BEFORE app.js.
  *
- * Existing browser progress is automatically assigned to the first profile.
- * Player names are deliberately generic because the GitHub repository is public.
+ * Fixes:
+ * - prevents pagehide/visibilitychange from overwriting the player we just left
+ *   with the newly restored player's data during a switch.
+ * - tracks which player's data currently occupies the legacy live keys.
+ * - keeps one emergency pre-switch backup per player.
  */
 (() => {
   const REGISTRY_KEY = 'english-quest-family-v1';
   const DATA_PREFIX = 'english-quest-player-data-v1:';
+  const RESCUE_PREFIX = 'english-quest-player-rescue-v1:';
+  const LIVE_OWNER_KEY = 'english-quest-family-live-owner-v1';
 
   const MANAGED_KEYS = [
     'english-quest-v1',
@@ -26,6 +31,8 @@
     { id:'child',   name:'小学生', icon:'🧢', defaultPack:'eiken5-start' },
     { id:'adult',   name:'大人',   icon:'☕', defaultPack:'toeic550-start' }
   ];
+
+  let switching = false;
 
   function safeGet(key) {
     try { return localStorage.getItem(key); }
@@ -43,8 +50,6 @@
   }
 
   function emptyStateJson() {
-    // app.js の migrate() を通す前提の最小データ。
-    // 既存アプリの最初の5語も、新規プレイヤーではロック状態から始める。
     const locked = {};
     ['they','his','friend','different','find'].forEach(id => {
       locked[id] = { unlocked:false };
@@ -97,6 +102,10 @@
     return `${DATA_PREFIX}${playerId}`;
   }
 
+  function rescueKey(playerId) {
+    return `${RESCUE_PREFIX}${playerId}`;
+  }
+
   function readBundle(playerId) {
     try {
       const raw = JSON.parse(localStorage.getItem(bundleKey(playerId)) || 'null');
@@ -111,20 +120,29 @@
     safeSet(bundleKey(playerId), JSON.stringify(bundle));
   }
 
-  function snapshotLive(playerId) {
-    if (!playerId) return;
-
+  function collectLiveValues() {
     const values = {};
     MANAGED_KEYS.forEach(key => {
       const value = safeGet(key);
       if (value !== null) values[key] = value;
     });
+    return values;
+  }
 
-    writeBundle(playerId, {
+  function snapshotLive(playerId, keepRescue = false) {
+    if (!playerId) return;
+
+    const bundle = {
       version: 1,
       updatedAt: Date.now(),
-      values
-    });
+      values: collectLiveValues()
+    };
+
+    writeBundle(playerId, bundle);
+
+    if (keepRescue) {
+      safeSet(rescueKey(playerId), JSON.stringify(bundle));
+    }
   }
 
   function clearManagedLive() {
@@ -142,8 +160,12 @@
     }
 
     Object.entries(values).forEach(([key, value]) => {
-      if (MANAGED_KEYS.includes(key) && typeof value === 'string') safeSet(key, value);
+      if (MANAGED_KEYS.includes(key) && typeof value === 'string') {
+        safeSet(key, value);
+      }
     });
+
+    safeSet(LIVE_OWNER_KEY, player.id);
 
     writeBundle(player.id, {
       version: 1,
@@ -155,28 +177,40 @@
   let registry = readRegistry();
 
   if (!registry) {
-    // 初回導入：これまでの実データを「中学生」にそのまま引き継ぐ。
+    // First FAMILY install: preserve the pre-FAMILY live data as the student profile.
     registry = normalizeRegistry({activeId:'student', players:DEFAULT_PLAYERS});
     saveRegistry(registry);
-    snapshotLive('student');
+
+    snapshotLive('student', true);
 
     DEFAULT_PLAYERS.filter(p => p.id !== 'student').forEach(player => {
       writeBundle(player.id, makeFreshBundle(player));
     });
+
+    safeSet(LIVE_OWNER_KEY, 'student');
   } else {
     registry = normalizeRegistry(registry);
     saveRegistry(registry);
 
-    // 直前まで表示していたプレイヤーの最新localStorageを先に退避。
-    snapshotLive(registry.activeId);
+    /*
+     * v1.0.1:
+     * Snapshot the player who actually owns the current legacy live keys.
+     * On old v1.0 installs LIVE_OWNER_KEY does not exist, so use the registry
+     * active player only once as a compatibility fallback.
+     */
+    const owner = safeGet(LIVE_OWNER_KEY);
+    const validOwner = registry.players.some(p => p.id === owner) ? owner : registry.activeId;
+    snapshotLive(validOwner);
 
-    // 新しく増えた既定プレイヤーがあれば初期データを用意。
     registry.players.forEach(player => {
       if (!readBundle(player.id)) writeBundle(player.id, makeFreshBundle(player));
     });
   }
 
-  let activePlayer = registry.players.find(p => p.id === registry.activeId) || registry.players[0];
+  let activePlayer =
+    registry.players.find(p => p.id === registry.activeId) ||
+    registry.players[0];
+
   restoreBundle(activePlayer);
 
   function getActivePlayer() {
@@ -193,18 +227,36 @@
 
     if (document.body?.classList.contains('test-mode')) {
       try {
-        if (typeof notify === 'function') notify('TEST MODEを終了してからプレイヤーを切り替えてください。');
+        if (typeof notify === 'function') {
+          notify('TEST MODEを終了してからプレイヤーを切り替えてください。');
+        }
       } catch (_) {}
       return false;
     }
 
-    const ok = window.confirm(`「${target.name}」に切り替えますか？\n画面を再読み込みします。`);
+    const ok = window.confirm(
+      `「${target.name}」に切り替えますか？\n画面を再読み込みします。`
+    );
     if (!ok) return false;
 
-    snapshotLive(activePlayer.id);
+    /*
+     * CRITICAL ORDER:
+     * 1. Save the player being left.
+     * 2. Mark switching=true so unload events cannot save under the old id.
+     * 3. Change active player.
+     * 4. Restore the target.
+     * 5. Reload.
+     */
+    snapshotLive(activePlayer.id, true);
+
+    switching = true;
+
     registry.activeId = target.id;
     saveRegistry(registry);
+
+    activePlayer = target;
     restoreBundle(target);
+
     location.reload();
     return true;
   }
@@ -213,11 +265,12 @@
     getActivePlayer,
     getPlayers,
     switchPlayer,
-    saveCurrent: () => snapshotLive(activePlayer.id)
+    saveCurrent: () => snapshotLive(activePlayer.id, true)
   };
 
   function injectStyle() {
     if (document.getElementById('player-layer-style')) return;
+
     const style = document.createElement('style');
     style.id = 'player-layer-style';
     style.textContent = `
@@ -235,7 +288,8 @@
         color:#425773;padding:8px 12px;font-size:12px;font-weight:900;cursor:pointer
       }
       .player-switcher button.current{
-        border-color:#3d58b6;background:#eaf0ff;color:#274293;box-shadow:inset 0 0 0 1px rgba(61,88,182,.12)
+        border-color:#3d58b6;background:#eaf0ff;color:#274293;
+        box-shadow:inset 0 0 0 1px rgba(61,88,182,.12)
       }
       .player-switcher button:disabled{cursor:default}
       @media(max-width:520px){
@@ -243,6 +297,7 @@
         .player-switcher button{padding:8px 11px}
       }
     `;
+
     document.head.appendChild(style);
   }
 
@@ -270,7 +325,10 @@
       b.dataset.playerId = player.id;
       b.textContent = `${player.icon} ${player.name}`;
       b.classList.toggle('current', player.id === activePlayer.id);
-      b.setAttribute('aria-pressed', player.id === activePlayer.id ? 'true' : 'false');
+      b.setAttribute(
+        'aria-pressed',
+        player.id === activePlayer.id ? 'true' : 'false'
+      );
       b.addEventListener('click', () => switchPlayer(player.id));
       buttons.appendChild(b);
     });
@@ -279,13 +337,17 @@
     topbar.insertAdjacentElement('afterend', root);
 
     const version = document.querySelector('.topbar .version');
-    if (version) version.textContent = 'v1.6 · FAMILY';
+    if (version) version.textContent = 'v1.6.1 · FAMILY';
   }
 
-  // 最新データをプレイヤー側にも退避。通常の学習保存先は従来どおりlocalStorage。
-  window.addEventListener('pagehide', () => snapshotLive(activePlayer.id));
+  window.addEventListener('pagehide', () => {
+    if (switching) return;
+    snapshotLive(activePlayer.id);
+  });
+
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'hidden') snapshotLive(activePlayer.id);
+    if (switching || document.visibilityState !== 'hidden') return;
+    snapshotLive(activePlayer.id);
   });
 
   if (document.readyState === 'loading') {
