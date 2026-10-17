@@ -1,552 +1,134 @@
 'use strict';
 
-/*
- * ENGLISH QUEST — BOSS v0.1
- *
- * Small-start boss experience:
- * - Unlocks at 25 crowns.
- * - 5 questions only.
- * - Stage 1 style: English -> choose the Japanese meaning.
- * - Questions come from mastered PROGRAM 4/5/6 words.
- * - No HP, no pass/fail, no rewards yet.
- * - Does NOT change XP, crowns, review dates, or learning records.
- * - Works in TEST MODE because it reads the temporary test state.
- */
-
+/* ENGLISH QUEST — TEST AREA v0.2 */
 (() => {
-  const BOSS_UNLOCK_CROWNS = 25;
-  const BOSS_QUESTION_COUNT = 5;
+  const PREF_KEY='english-quest-test-area-pref-v1';
+  const STAGE_LABEL={1:'見る',2:'言う',3:'書く'};
+  let session=null, syncQueued=false;
 
-  let bossSession = null;
-  let syncQueued = false;
+  const api=()=>window.EnglishQuestCourses||null;
+  const unique=words=>{const s=new Set();return words.filter(w=>w&&!s.has(w.id)&&(s.add(w.id),true));};
 
-  function bossUnlocked() {
-    try {
-      return focusMasterCount() >= BOSS_UNLOCK_CROWNS;
-    } catch (_) {
-      return false;
-    }
+  function packs(){
+    const a=api();
+    if(a?.getPacks&&a?.wordsForPack) return a.getPacks().map(p=>({...p,words:a.wordsForPack(p)}));
+    return [3,4,5,6].map(p=>({id:`school-p${p}`,label:`PROGRAM ${p}`,program:p,words:WORDS.filter(w=>(w.programs||[]).includes(p))}));
+  }
+  function activePackId(){try{return api()?.getActivePack?.().id||'';}catch(_){return '';}}
+  function wordsFor(ids){const set=new Set(ids);return unique(packs().filter(p=>set.has(p.id)).flatMap(p=>p.words));}
+  function shuffleCopy(a){return shuffle(a);}
+
+  function prefs(){
+    const fallback={packIds:activePackId()?[activePackId()]:['school-p4'],mode:'mix',amount:'20'};
+    try{
+      const x=JSON.parse(localStorage.getItem(PREF_KEY)||'null');
+      if(!x||typeof x!=='object')return fallback;
+      return {
+        packIds:Array.isArray(x.packIds)?x.packIds:fallback.packIds,
+        mode:['mix','1','2','3'].includes(String(x.mode))?String(x.mode):'mix',
+        amount:['10','20','all','endless'].includes(String(x.amount))?String(x.amount):'20'
+      };
+    }catch(_){return fallback;}
+  }
+  function savePrefs(x){try{localStorage.setItem(PREF_KEY,JSON.stringify(x));}catch(_){}}
+
+  function injectStyle(){
+    if(document.getElementById('test-area-v02-style'))return;
+    const s=document.createElement('style');s.id='test-area-v02-style';s.textContent=`
+      .test-area-open-btn{margin-top:14px;width:100%;min-height:50px;border:0;border-radius:14px;padding:12px 16px;background:linear-gradient(180deg,#344cc2,#273b9c);color:#fff;font-weight:900;font-size:15px;cursor:pointer;box-shadow:0 5px 14px rgba(31,46,120,.22)}
+      body.test-area-modal-open{overflow:hidden}.test-area-overlay{position:fixed;inset:0;z-index:300;display:grid;place-items:center;padding:14px;background:rgba(17,22,46,.82);backdrop-filter:blur(4px)}.test-area-overlay[hidden]{display:none!important}
+      .test-area-card{width:min(100%,680px);max-height:min(92vh,860px);overflow:auto;border:2px solid #5968af;border-radius:24px;background:#fffdf8;box-shadow:0 24px 70px rgba(0,0,0,.38);padding:clamp(18px,4.5vw,32px);color:#20334d}
+      .test-area-top{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}.test-area-kicker{color:#a27b1d;font-size:11px;font-weight:950;letter-spacing:.15em}.test-area-card h2{margin:5px 0 0;font-size:clamp(24px,6vw,32px)}
+      .test-area-close{flex:0 0 auto;border:1px solid #cdd6e1;border-radius:11px;background:#fff;color:#4b5d73;font-weight:850;padding:9px 12px;cursor:pointer}.test-area-section{margin:18px 0 0}.test-area-section h3{margin:0 0 10px;font-size:15px}
+      .test-pack-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.test-pack-option{position:relative;display:block}.test-pack-option input,.test-segment input{position:absolute;opacity:0;pointer-events:none}
+      .test-pack-box{display:block;min-height:72px;border:1.5px solid #d0d9e4;border-radius:14px;padding:11px 13px;background:#f8fafc;cursor:pointer}.test-pack-option input:checked+.test-pack-box{border-color:#4a62bd;background:#edf1ff;box-shadow:inset 0 0 0 1px rgba(74,98,189,.14)}.test-pack-option input:disabled+.test-pack-box{opacity:.48;cursor:not-allowed}.test-pack-box strong{display:block;margin-bottom:4px}.test-pack-box small{color:#728095}
+      .test-segment{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.test-segment label{position:relative;display:block}.test-segment span{display:grid;place-items:center;min-height:46px;border:1.5px solid #d0d9e4;border-radius:12px;background:#fff;font-weight:850;font-size:13px;cursor:pointer;text-align:center;padding:7px}.test-segment input:checked+span{background:#273f9f;color:#fff;border-color:#273f9f}
+      .test-area-start,.test-area-next,.test-area-primary{width:100%;min-height:50px;border:0;border-radius:14px;padding:12px 16px;background:linear-gradient(180deg,#344cc2,#273b9c);color:#fff;font-weight:950;cursor:pointer}.test-area-start{margin-top:22px}.test-area-start:disabled{opacity:.45;cursor:not-allowed}.test-area-quiet{margin:10px 0 0;color:#758298;font-size:12px;line-height:1.6}
+      .test-q-head{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#65758a;font-size:12px;font-weight:900}.test-q-stage{display:inline-flex;align-items:center;border-radius:999px;padding:6px 10px;background:#eef1fb;color:#324a9d}.test-q-progress{height:9px;border-radius:999px;background:#e1e6ed;overflow:hidden;margin:12px 0 22px}.test-q-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#50b7bf,#efc85b);transition:width .2s ease}
+      .test-q-instruction{margin:0 0 8px;text-align:center;color:#718095;font-size:13px}.test-q-word{margin:8px 0 22px;text-align:center;font-size:clamp(30px,8vw,46px);line-height:1.2;overflow-wrap:anywhere}.test-answer-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.test-answer-btn{min-height:66px;border:1.5px solid #cad6e2;border-radius:14px;background:#f8fafc;color:#20334d;padding:11px;font-weight:800;cursor:pointer}.test-answer-btn.right{border-color:#4caf7d;background:#eaf8ef}.test-answer-btn.wrong{border-color:#df9696;background:#fff0f0}.test-answer-btn:disabled{opacity:1;cursor:default}
+      .test-say-answer{margin:12px 0;border-radius:14px;background:#eef3fb;padding:15px;text-align:center;font-size:22px;font-weight:900}.test-say-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.test-say-actions button,.test-reveal-btn,.test-replay-btn{min-height:48px;border-radius:13px;padding:10px 12px;font-weight:900;cursor:pointer}.test-reveal-btn{width:100%;border:0;background:#2f47aa;color:#fff}.test-replay-btn{width:100%;border:1px solid #ccd7e4;background:#fff;color:#314c69}.test-say-actions button:first-child{border:0;background:#2e9367;color:#fff}.test-say-actions button:last-child{border:1px solid #d6a9a9;background:#fff7f7;color:#8b4d4d}
+      .test-write-form{display:flex;gap:9px}.test-write-input{flex:1 1 auto;min-width:0;min-height:50px;border:2px solid #c9d5e2;border-radius:13px;background:#fff;padding:10px 13px;font-size:18px}.test-write-submit{flex:0 0 auto;min-height:50px;border:0;border-radius:13px;background:#2f47aa;color:#fff;padding:10px 15px;font-weight:900}
+      .test-feedback{margin-top:15px;padding:13px 15px;border:1px solid #bee0ca;border-radius:13px;background:#ebf8f0;line-height:1.6}.test-feedback.bad{border-color:#e3c7a3;background:#fff5e9}.test-feedback[hidden],.test-area-next[hidden]{display:none!important}.test-area-next{margin-top:12px}.test-endless-stop{margin-top:10px;width:100%;min-height:46px;border:1px solid #ccd6e2;border-radius:13px;background:#fff;color:#52657b;font-weight:850;cursor:pointer}
+      .test-result{text-align:center}.test-result-score{margin:10px 0 2px;font-size:clamp(42px,11vw,64px);font-weight:950;color:#293f96}.test-result-rate{color:#65758b;font-weight:850}.test-result-summary{margin:18px 0;padding:14px;border-radius:14px;background:#f1f4f8;line-height:1.7}.test-wrong-details{text-align:left;margin:14px 0;border:1px solid #d7dee7;border-radius:14px;padding:12px 14px}.test-wrong-details summary{cursor:pointer;font-weight:900}.test-wrong-list{margin:10px 0 0;padding-left:20px;line-height:1.7}.test-result-actions{display:grid;gap:9px;margin-top:16px}.test-area-secondary{width:100%;min-height:48px;border:1px solid #c9d4e0;border-radius:13px;background:#fff;color:#314d69;padding:10px 14px;font-weight:900;cursor:pointer}
+      @media(max-width:540px){.test-pack-grid{grid-template-columns:1fr}.test-segment{grid-template-columns:repeat(2,minmax(0,1fr))}.test-answer-grid{grid-template-columns:1fr}.test-write-form{display:block}.test-write-submit{width:100%;margin-top:9px}.test-area-card{border-radius:20px;padding:18px}}
+    `;document.head.appendChild(s);
   }
 
-  function masteredFocusWords() {
-    try {
-      return allFocusWords().filter(w => state.records[w.id]?.mastered);
-    } catch (_) {
-      return [];
-    }
+  function ensureButton(){
+    const copy=document.querySelector('.boss-teaser .boss-copy');if(!copy)return null;
+    let b=document.getElementById('test-area-open-btn');
+    if(!b){b=document.createElement('button');b.type='button';b.id='test-area-open-btn';b.className='test-area-open-btn';b.textContent='範囲を選んでテストする →';b.addEventListener('click',openSetup);copy.appendChild(b);}
+    return b;
   }
 
-  function sampleBossWords() {
-    const pool = masteredFocusWords();
-    if (pool.length < BOSS_QUESTION_COUNT) return [];
-    return shuffle(pool).slice(0, BOSS_QUESTION_COUNT);
+  function syncTeaser(){
+    syncQueued=false;const title=el('boss-title'),msg=el('boss-message'),lock=el('boss-lock'),btn=ensureButton();if(!title||!msg||!lock||!btn)return;
+    if(title.textContent!=='覚えているか、試してみる。')title.textContent='覚えているか、試してみる。';
+    const m='範囲と出題方法を選んで、何問でもテストできます。学習記録は変わりません。';if(msg.textContent!==m)msg.textContent=m;
+    if(lock.textContent!=='TEST')lock.textContent='TEST';lock.classList.add('ready');btn.hidden=false;
   }
+  function queueSync(){if(syncQueued)return;syncQueued=true;requestAnimationFrame(syncTeaser);}
 
-  function injectStyle() {
-    if (document.getElementById('boss-v01-style')) return;
-
-    const style = document.createElement('style');
-    style.id = 'boss-v01-style';
-    style.textContent = `
-      .boss-challenge-btn{
-        margin-top:14px;
-        width:100%;
-        min-height:48px;
-        border:1px solid #f0c86e;
-        border-radius:13px;
-        padding:11px 16px;
-        background:linear-gradient(180deg,#ffe59a,#f2c35c);
-        color:#4f3700;
-        font-weight:900;
-        font-size:14px;
-        cursor:pointer;
-        box-shadow:0 4px 10px rgba(0,0,0,.12);
-      }
-      .boss-challenge-btn:hover{filter:brightness(1.03)}
-      .boss-challenge-btn[hidden]{display:none!important}
-
-      body.boss-v01-open{overflow:hidden}
-
-      .boss-v01-overlay{
-        position:fixed;
-        inset:0;
-        z-index:250;
-        display:grid;
-        place-items:center;
-        padding:18px;
-        background:rgba(18,20,45,.78);
-        backdrop-filter:blur(4px);
-      }
-      .boss-v01-overlay[hidden]{display:none!important}
-
-      .boss-v01-card{
-        width:min(100%,620px);
-        max-height:min(88vh,760px);
-        overflow:auto;
-        border:2px solid #5f64a6;
-        border-radius:24px;
-        background:#fffdf7;
-        box-shadow:0 24px 60px rgba(0,0,0,.35);
-        padding:clamp(20px,5vw,34px);
-        color:#20324b;
-      }
-
-      .boss-v01-top{
-        display:flex;
-        justify-content:space-between;
-        align-items:flex-start;
-        gap:16px;
-        margin-bottom:18px;
-      }
-      .boss-v01-label{
-        font-size:11px;
-        letter-spacing:.16em;
-        font-weight:900;
-        color:#9b7921;
-      }
-      .boss-v01-card h2{
-        margin:5px 0 0;
-        font-size:clamp(22px,5vw,30px);
-      }
-      .boss-v01-close{
-        flex:0 0 auto;
-        border:1px solid #cfd5df;
-        background:#fff;
-        color:#4d5e73;
-        border-radius:10px;
-        padding:8px 11px;
-        font-weight:800;
-        cursor:pointer;
-      }
-
-      .boss-v01-enemy{
-        width:90px;
-        height:90px;
-        margin:4px auto 18px;
-        display:grid;
-        place-items:center;
-        border-radius:24px;
-        background:linear-gradient(145deg,#262a5a,#41356d);
-        border:3px solid #696fa9;
-        color:#ffe08a;
-        font-size:52px;
-        font-weight:950;
-        box-shadow:inset 0 0 0 4px rgba(255,255,255,.04);
-      }
-
-      .boss-v01-progress{
-        height:9px;
-        border-radius:999px;
-        background:#e0e4ea;
-        overflow:hidden;
-        margin:10px 0 22px;
-      }
-      .boss-v01-progress span{
-        display:block;
-        height:100%;
-        width:0;
-        background:linear-gradient(90deg,#4bb4c4,#f2c95f);
-        transition:width .2s ease;
-      }
-
-      .boss-v01-counter{
-        font-size:12px;
-        font-weight:900;
-        color:#68778b;
-        text-align:center;
-      }
-      .boss-v01-instruction{
-        margin:14px 0 6px;
-        text-align:center;
-        color:#68778b;
-        font-size:13px;
-      }
-      .boss-v01-word{
-        margin:6px 0 22px;
-        text-align:center;
-        font-size:clamp(32px,8vw,48px);
-        line-height:1.2;
-        overflow-wrap:anywhere;
-      }
-
-      .boss-v01-options{
-        display:grid;
-        grid-template-columns:1fr 1fr;
-        gap:10px;
-      }
-      .boss-v01-option{
-        min-height:70px;
-        border:1.5px solid #cbd9e6;
-        border-radius:14px;
-        background:#f7f9fc;
-        color:#20324b;
-        padding:12px;
-        font-weight:750;
-        cursor:pointer;
-      }
-      .boss-v01-option.right{
-        border-color:#50b283;
-        background:#e9f8ee;
-      }
-      .boss-v01-option.wrong{
-        border-color:#df9393;
-        background:#fff0f0;
-      }
-      .boss-v01-option:disabled{
-        opacity:1;
-        cursor:default;
-      }
-
-      .boss-v01-feedback{
-        margin:16px 0 0;
-        padding:13px 15px;
-        border-radius:13px;
-        background:#eef7f1;
-        border:1px solid #c3e4ce;
-        font-size:14px;
-        line-height:1.65;
-      }
-      .boss-v01-feedback.bad{
-        background:#fff5eb;
-        border-color:#e8cfaa;
-      }
-      .boss-v01-feedback[hidden]{display:none!important}
-
-      .boss-v01-next,
-      .boss-v01-again,
-      .boss-v01-home{
-        width:100%;
-        min-height:48px;
-        margin-top:13px;
-        border-radius:13px;
-        padding:11px 16px;
-        font-weight:900;
-        cursor:pointer;
-      }
-      .boss-v01-next,
-      .boss-v01-again{
-        border:0;
-        background:linear-gradient(180deg,#2e4bb3,#2543a0);
-        color:#fff;
-      }
-      .boss-v01-home{
-        border:1px solid #c6d2df;
-        background:#fff;
-        color:#35516d;
-      }
-      .boss-v01-next[hidden],
-      .boss-v01-again[hidden],
-      .boss-v01-home[hidden]{display:none!important}
-
-      .boss-v01-result{
-        text-align:center;
-        padding:6px 0 2px;
-      }
-      .boss-v01-score{
-        margin:12px 0 4px;
-        font-size:clamp(38px,10vw,62px);
-        font-weight:950;
-        color:#293f95;
-      }
-      .boss-v01-note{
-        color:#68778b;
-        line-height:1.7;
-        font-size:14px;
-      }
-
-      @media(max-width:520px){
-        .boss-v01-options{grid-template-columns:1fr}
-        .boss-v01-option{min-height:56px}
-        .boss-v01-card{border-radius:20px;padding:20px}
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  function ensureChallengeButton() {
-    const copy = document.querySelector('.boss-teaser .boss-copy');
-    if (!copy) return null;
-
-    let button = document.getElementById('boss-challenge-btn');
-    if (!button) {
-      button = document.createElement('button');
-      button.type = 'button';
-      button.id = 'boss-challenge-btn';
-      button.className = 'boss-challenge-btn';
-      button.textContent = 'ボスに挑む →';
-      button.addEventListener('click', startBoss);
-      copy.appendChild(button);
-    }
-    return button;
-  }
-
-  function syncBossTeaser() {
-    syncQueued = false;
-
-    const title = document.getElementById('boss-title');
-    const message = document.getElementById('boss-message');
-    const lock = document.getElementById('boss-lock');
-    const button = ensureChallengeButton();
-    if (!title || !message || !lock || !button) return;
-
-    const crowns = (() => {
-      try { return focusMasterCount(); }
-      catch (_) { return 0; }
-    })();
-
-    const ready = crowns >= BOSS_UNLOCK_CROWNS;
-
-    if (ready) {
-      if (title.textContent !== 'ボスへの道がひらいた。') {
-        title.textContent = 'ボスへの道がひらいた。';
-      }
-      if (message.textContent !== '5問だけ、挑戦してみよう。学習記録は変わりません。') {
-        message.textContent = '5問だけ、挑戦してみよう。学習記録は変わりません。';
-      }
-      if (lock.textContent !== '!') lock.textContent = '!';
-      lock.classList.add('ready');
-      button.hidden = false;
-    } else {
-      button.hidden = true;
-      const remaining = Math.max(0, BOSS_UNLOCK_CROWNS - crowns);
-      const expected = `最初のボスまで、あと${remaining}王冠。`;
-      if (message.textContent !== expected) message.textContent = expected;
-    }
-  }
-
-  function queueSync() {
-    if (syncQueued) return;
-    syncQueued = true;
-    requestAnimationFrame(syncBossTeaser);
-  }
-
-  function createModal() {
-    if (document.getElementById('boss-v01-overlay')) return;
-
-    const overlay = document.createElement('div');
-    overlay.id = 'boss-v01-overlay';
-    overlay.className = 'boss-v01-overlay';
-    overlay.hidden = true;
-    overlay.innerHTML = `
-      <section class="boss-v01-card" role="dialog" aria-modal="true" aria-labelledby="boss-v01-title">
-        <div class="boss-v01-top">
-          <div>
-            <div class="boss-v01-label">BOSS CHALLENGE · v0.1</div>
-            <h2 id="boss-v01-title">最初のボス</h2>
-          </div>
-          <button type="button" class="boss-v01-close" id="boss-v01-close">閉じる</button>
+  function createModal(){
+    if(el('test-area-overlay'))return;
+    const o=document.createElement('div');o.id='test-area-overlay';o.className='test-area-overlay';o.hidden=true;o.innerHTML=`
+      <section class="test-area-card" role="dialog" aria-modal="true" aria-labelledby="test-area-title">
+        <div class="test-area-top"><div><div class="test-area-kicker">TEST AREA · v0.2</div><h2 id="test-area-title">範囲テスト</h2></div><button type="button" class="test-area-close" id="test-area-close">閉じる</button></div>
+        <div id="test-area-setup">
+          <div class="test-area-section"><h3>① 出題範囲</h3><div class="test-pack-grid" id="test-pack-grid"></div></div>
+          <div class="test-area-section"><h3>② 出題方法</h3><div class="test-segment"><label><input type="radio" name="test-mode" value="mix" checked><span>MIX</span></label><label><input type="radio" name="test-mode" value="1"><span>見る</span></label><label><input type="radio" name="test-mode" value="2"><span>言う</span></label><label><input type="radio" name="test-mode" value="3"><span>書く</span></label></div></div>
+          <div class="test-area-section"><h3>③ 問題数</h3><div class="test-segment"><label><input type="radio" name="test-amount" value="10"><span>10問</span></label><label><input type="radio" name="test-amount" value="20" checked><span>20問</span></label><label><input type="radio" name="test-amount" value="all"><span>全範囲</span></label><label><input type="radio" name="test-amount" value="endless"><span>ひたすら</span></label></div></div>
+          <button type="button" class="test-area-start" id="test-area-start">テスト開始 →</button><p class="test-area-quiet" id="test-area-selection-note"></p><p class="test-area-quiet">EXP・王冠・復習日は変わりません。試験前の確認専用です。</p>
         </div>
-
-        <div id="boss-v01-question-area">
-          <div class="boss-v01-enemy" aria-hidden="true">?</div>
-          <div class="boss-v01-counter" id="boss-v01-counter">1 / 5</div>
-          <div class="boss-v01-progress"><span id="boss-v01-progress-bar"></span></div>
-          <p class="boss-v01-instruction">英語を見て、正しい意味を選ぼう</p>
-          <h3 class="boss-v01-word" id="boss-v01-word"></h3>
-          <div class="boss-v01-options" id="boss-v01-options"></div>
-          <div class="boss-v01-feedback" id="boss-v01-feedback" hidden></div>
-          <button type="button" class="boss-v01-next" id="boss-v01-next" hidden>次の問題へ →</button>
-        </div>
-
-        <div class="boss-v01-result" id="boss-v01-result" hidden>
-          <div class="boss-v01-enemy" aria-hidden="true">!</div>
-          <div class="boss-v01-label">CHALLENGE COMPLETE</div>
-          <div class="boss-v01-score" id="boss-v01-score">0 / 5</div>
-          <p class="boss-v01-note">まずはここまで。<br>HP・撃破条件・装備効果・報酬は、あとから少しずつ追加できます。</p>
-          <button type="button" class="boss-v01-again" id="boss-v01-again">もう一度挑む</button>
-          <button type="button" class="boss-v01-home" id="boss-v01-home">ホームへ戻る</button>
-        </div>
-      </section>
-    `;
-
-    document.body.appendChild(overlay);
-
-    document.getElementById('boss-v01-close').addEventListener('click', closeBoss);
-    document.getElementById('boss-v01-next').addEventListener('click', nextBossQuestion);
-    document.getElementById('boss-v01-again').addEventListener('click', startBoss);
-    document.getElementById('boss-v01-home').addEventListener('click', closeBoss);
-
-    overlay.addEventListener('click', evt => {
-      if (evt.target === overlay) closeBoss();
-    });
-
-    document.addEventListener('keydown', evt => {
-      if (evt.key === 'Escape' && !overlay.hidden) closeBoss();
-    });
+        <div id="test-area-question" hidden><div class="test-q-head"><span class="test-q-stage" id="test-q-stage">MIX</span><span id="test-q-counter"></span></div><div class="test-q-progress"><span id="test-q-progress-bar"></span></div><p class="test-q-instruction" id="test-q-instruction"></p><h3 class="test-q-word" id="test-q-word"></h3><div id="test-q-answer-area"></div><div class="test-feedback" id="test-q-feedback" hidden></div><button type="button" class="test-area-next" id="test-q-next" hidden>次の問題へ →</button><button type="button" class="test-endless-stop" id="test-endless-stop" hidden>ここで結果を見る</button></div>
+        <div class="test-result" id="test-area-result" hidden><div class="test-area-kicker">TEST COMPLETE</div><div class="test-result-score" id="test-result-score"></div><div class="test-result-rate" id="test-result-rate"></div><div class="test-result-summary" id="test-result-summary"></div><details class="test-wrong-details" id="test-wrong-details" hidden><summary id="test-wrong-summary"></summary><ul class="test-wrong-list" id="test-wrong-list"></ul></details><div class="test-result-actions"><button type="button" class="test-area-primary" id="test-retry-wrong" hidden>間違えた語だけ再テスト</button><button type="button" class="test-area-secondary" id="test-restart-same">同じ条件でもう一度</button><button type="button" class="test-area-secondary" id="test-change-settings">範囲・条件を変える</button><button type="button" class="test-area-secondary" id="test-result-close">ホームへ戻る</button></div></div>
+      </section>`;
+    document.body.appendChild(o);
+    el('test-area-close').addEventListener('click',closeModal);el('test-area-start').addEventListener('click',startFromSetup);el('test-q-next').addEventListener('click',advance);el('test-endless-stop').addEventListener('click',finish);el('test-retry-wrong').addEventListener('click',retryWrong);el('test-restart-same').addEventListener('click',restartSame);el('test-change-settings').addEventListener('click',showSetup);el('test-result-close').addEventListener('click',closeModal);
+    o.addEventListener('click',e=>{if(e.target===o)closeModal();});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!o.hidden)closeModal();});
   }
 
-  function openBoss() {
-    const overlay = document.getElementById('boss-v01-overlay');
-    if (!overlay) return;
-    overlay.hidden = false;
-    document.body.classList.add('boss-v01-open');
+  function renderPackChoices(){
+    const root=el('test-pack-grid');root.replaceChildren();const p=prefs(),ps=packs(),valid=new Set(ps.filter(x=>x.words.length).map(x=>x.id));let selected=p.packIds.filter(id=>valid.has(id));
+    if(!selected.length){const a=activePackId();if(valid.has(a))selected=[a];else{const f=ps.find(x=>x.words.length);if(f)selected=[f.id];}}
+    ps.forEach(pack=>{const enabled=pack.words.length>0,l=document.createElement('label');l.className='test-pack-option';const i=document.createElement('input');i.type='checkbox';i.name='test-pack';i.value=pack.id;i.disabled=!enabled;i.checked=enabled&&selected.includes(pack.id);const box=document.createElement('span');box.className='test-pack-box';const strong=document.createElement('strong');strong.textContent=pack.label||pack.id;const small=document.createElement('small');small.textContent=enabled?`${pack.words.length}語`:'単語データ未登録';box.append(strong,small);l.append(i,box);root.append(l);i.addEventListener('change',selectionNote);});
+    document.querySelector(`input[name="test-mode"][value="${p.mode}"]`)?.click();document.querySelector(`input[name="test-amount"][value="${p.amount}"]`)?.click();selectionNote();
+  }
+  function setupValues(){return {packIds:[...document.querySelectorAll('input[name="test-pack"]:checked')].map(x=>x.value),mode:document.querySelector('input[name="test-mode"]:checked')?.value||'mix',amount:document.querySelector('input[name="test-amount"]:checked')?.value||'20'};}
+  function selectionNote(){const x=setupValues(),ws=wordsFor(x.packIds),labels=packs().filter(p=>x.packIds.includes(p.id)).map(p=>p.label);el('test-area-start').disabled=!ws.length;el('test-area-selection-note').textContent=ws.length?`選択中：${labels.join(' ＋ ')}　合計 ${ws.length}語`:'出題範囲を1つ以上選んでください。';}
+  function openSetup(){createModal();showSetup();el('test-area-overlay').hidden=false;document.body.classList.add('test-area-modal-open');}
+  function closeModal(){const o=el('test-area-overlay');if(!o)return;o.hidden=true;document.body.classList.remove('test-area-modal-open');try{speechSynthesis?.cancel?.();}catch(_){}session=null;}
+  function showSetup(){el('test-area-setup').hidden=false;el('test-area-question').hidden=true;el('test-area-result').hidden=true;renderPackChoices();}
+
+  function wordQueue(pool,count){const q=[];let last=null;while(q.length<count){let c=shuffleCopy(pool);if(c.length>1&&last&&c[0].id===last)[c[0],c[1]]=[c[1],c[0]];for(const w of c){if(q.length>=count)break;q.push(w);}last=q.at(-1)?.id||null;}return q;}
+  function stageDeck(){return shuffleCopy([1,2,3]);}
+  function nextStage(s){if(s.mode!=='mix')return Number(s.mode);if(!s.stageDeck.length)s.stageDeck=stageDeck();return s.stageDeck.shift();}
+  function finiteTasks(pool,amount,mode){const words=amount==='all'?shuffleCopy(pool):wordQueue(pool,Number(amount));const temp={mode,stageDeck:[]};return words.map(word=>({word,stage:nextStage(temp)}));}
+
+  function startFromSetup(){const x=setupValues(),pool=wordsFor(x.packIds);if(!pool.length){notify?.('出題範囲を1つ以上選んでください。');return;}savePrefs(x);session={...x,pool,endless:x.amount==='endless',tasks:x.amount==='endless'?[]:finiteTasks(pool,x.amount,x.mode),index:0,current:null,score:0,answeredCount:0,answered:false,wrong:new Map(),stageDeck:[],endlessQueue:[],cycle:0,lastWordId:null};el('test-area-setup').hidden=true;el('test-area-result').hidden=true;el('test-area-question').hidden=false;prepare();renderQuestion();}
+  function nextEndlessWord(){if(!session.endlessQueue.length){let c=shuffleCopy(session.pool);if(c.length>1&&session.lastWordId&&c[0].id===session.lastWordId)[c[0],c[1]]=[c[1],c[0]];session.endlessQueue=c;session.cycle++;}const w=session.endlessQueue.shift();session.lastWordId=w?.id||null;return w;}
+  function prepare(){session.current=session.endless?{word:nextEndlessWord(),stage:nextStage(session)}:(session.tasks[session.index]||null);session.answered=false;}
+
+  function distractors(word){const same=session.pool.filter(w=>w.id!==word.id&&w.jp!==word.jp&&(w.programs||[]).some(p=>(word.programs||[]).includes(p)));let pool=same.length>=3?same:session.pool.filter(w=>w.id!==word.id&&w.jp!==word.jp);let chosen=shuffleCopy(pool).slice(0,3);if(chosen.length<3){const used=new Set([word.id,...chosen.map(w=>w.id)]);const fill=WORDS.filter(w=>!used.has(w.id)&&w.jp!==word.jp&&!chosen.some(x=>x.jp===w.jp));chosen.push(...shuffleCopy(fill).slice(0,3-chosen.length));}return shuffleCopy([word,...chosen]);}
+  function counter(){return session.endless?`${session.answeredCount+1}問目・${session.cycle}周目`:`${session.index+1} / ${session.tasks.length}`;}
+  function progress(){if(session.endless){const n=Math.max(1,session.pool.length),pos=n-session.endlessQueue.length;return Math.min(100,pos/n*100);}return session.index/Math.max(1,session.tasks.length)*100;}
+
+  function renderQuestion(){
+    if(!session?.current){finish();return;}const {word,stage}=session.current;el('test-q-stage').textContent=session.mode==='mix'?`MIX · ${STAGE_LABEL[stage]}`:`TEST · ${STAGE_LABEL[stage]}`;el('test-q-counter').textContent=counter();el('test-q-progress-bar').style.width=`${progress()}%`;const ins=el('test-q-instruction'),prompt=el('test-q-word'),root=el('test-q-answer-area'),fb=el('test-q-feedback'),next=el('test-q-next'),stop=el('test-endless-stop');root.replaceChildren();fb.hidden=true;fb.classList.remove('bad');next.hidden=true;stop.hidden=!session.endless;
+    if(stage===1){ins.textContent='英語を見て、正しい意味を選ぼう';prompt.textContent=word.en;const grid=document.createElement('div');grid.className='test-answer-grid';distractors(word).forEach(opt=>{const b=document.createElement('button');b.type='button';b.className='test-answer-btn';b.textContent=opt.jp;b.addEventListener('click',()=>{if(session.answered)return;const ok=opt.id===word.id;grid.querySelectorAll('button').forEach(x=>{x.disabled=true;if(x===b)x.classList.add(ok?'right':'wrong');if(!ok&&x.textContent===word.jp)x.classList.add('right');});record(ok,word,stage);feedback(ok,ok?`正解！ ${word.en} = ${word.jp}`:`正解は「${word.jp}」。`);});grid.append(b);});root.append(grid);return;}
+    if(stage===2){ins.textContent='日本語を見て、先に英語を声に出そう';prompt.textContent=word.jp;const reveal=document.createElement('button');reveal.type='button';reveal.className='test-reveal-btn';reveal.textContent='答えと発音を確認する 🔊';const ans=document.createElement('div');ans.className='test-say-answer';ans.hidden=true;const replay=document.createElement('button');replay.type='button';replay.className='test-replay-btn';replay.textContent='もう一度聞く 🔊';replay.hidden=true;const acts=document.createElement('div');acts.className='test-say-actions';acts.hidden=true;const yes=document.createElement('button');yes.type='button';yes.textContent='言えた ✓';const no=document.createElement('button');no.type='button';no.textContent='まだ難しい';reveal.addEventListener('click',()=>{ans.textContent=word.en;ans.hidden=false;reveal.hidden=true;replay.hidden=false;acts.hidden=false;try{speakWord(word);}catch(_){}});replay.addEventListener('click',()=>{try{speakWord(word);}catch(_){}});yes.addEventListener('click',()=>{if(session.answered)return;yes.disabled=no.disabled=true;record(true,word,stage);feedback(true,`言えた！ ${word.en}`);});no.addEventListener('click',()=>{if(session.answered)return;yes.disabled=no.disabled=true;record(false,word,stage);feedback(false,`答え：${word.en}`);});acts.append(yes,no);root.append(reveal,ans,replay,acts);return;}
+    ins.textContent='日本語を見て、英語を正確に書こう';prompt.textContent=word.jp;const form=document.createElement('form');form.className='test-write-form';form.noValidate=true;const input=document.createElement('input');input.className='test-write-input';input.type='text';input.autocomplete='off';input.autocapitalize='none';input.spellcheck=false;input.placeholder='ここに英語を書く';const sub=document.createElement('button');sub.type='submit';sub.className='test-write-submit';sub.textContent='答え合わせ';form.append(input,sub);form.addEventListener('submit',e=>{e.preventDefault();if(session.answered)return;sub.disabled=true;input.readOnly=true;const ok=isTypedCorrect(input.value,word);record(ok,word,stage);let m=ok?`正解！ ${word.en}（${word.jp}）`:`正解：${word.en}`;if(!ok)try{m=spellingHint(input.value,word.en);}catch(_){}feedback(ok,m);});root.append(form);setTimeout(()=>{try{input.focus({preventScroll:true});}catch(_){}},80);
   }
 
-  function closeBoss() {
-    const overlay = document.getElementById('boss-v01-overlay');
-    if (!overlay) return;
-    overlay.hidden = true;
-    document.body.classList.remove('boss-v01-open');
-    bossSession = null;
-  }
+  function record(ok,word,stage){if(session.answered)return;session.answered=true;session.answeredCount++;if(ok)session.score++;else{const x=session.wrong.get(word.id)||{word,misses:0,stages:new Set()};x.misses++;x.stages.add(stage);session.wrong.set(word.id,x);}}
+  function feedback(ok,msg){const fb=el('test-q-feedback'),next=el('test-q-next');fb.hidden=false;fb.classList.toggle('bad',!ok);fb.textContent=msg;next.hidden=false;next.textContent=!session.endless&&session.index===session.tasks.length-1?'結果を見る →':'次の問題へ →';}
+  function advance(){if(!session?.answered)return;if(session.endless){prepare();renderQuestion();return;}session.index++;if(session.index>=session.tasks.length){finish();return;}prepare();renderQuestion();}
 
-  function startBoss() {
-    if (!bossUnlocked()) {
-      try { notify(`最初のボスは王冠${BOSS_UNLOCK_CROWNS}個でひらきます。`); }
-      catch (_) {}
-      return;
-    }
+  function finish(){if(!session)return;el('test-area-setup').hidden=true;el('test-area-question').hidden=true;el('test-area-result').hidden=false;const total=session.answeredCount,score=session.score,rate=total?Math.round(score/total*100):0;el('test-result-score').textContent=`${score} / ${total}`;el('test-result-rate').textContent=`正解率 ${rate}%`;const labels=packs().filter(p=>session.packIds.includes(p.id)).map(p=>p.label).join(' ＋ '),mode=session.mode==='mix'?'MIX':STAGE_LABEL[Number(session.mode)],amount=session.endless?`ひたすら・${total}問で終了`:session.amount==='all'?'全範囲':`${session.tasks.length}問`;el('test-result-summary').textContent=`${labels} / ${mode} / ${amount}。間違えた語は${session.wrong.size}語でした。`;const details=el('test-wrong-details'),list=el('test-wrong-list'),retry=el('test-retry-wrong');list.replaceChildren();if(session.wrong.size){details.hidden=false;retry.hidden=false;el('test-wrong-summary').textContent=`間違えた語 ${session.wrong.size}語`;[...session.wrong.values()].sort((a,b)=>b.misses-a.misses||a.word.en.localeCompare(b.word.en)).forEach(item=>{const li=document.createElement('li');li.textContent=`${item.word.en} — ${item.word.jp}（${[...item.stages].map(s=>STAGE_LABEL[s]).join('・')}）`;list.append(li);});}else{details.hidden=true;retry.hidden=true;}}
+  function retryWrong(){if(!session?.wrong.size)return;const prior=session,wrong=[...prior.wrong.values()].map(x=>x.word),temp={mode:prior.mode,stageDeck:[]};session={packIds:[...prior.packIds],mode:prior.mode,amount:'wrong',pool:wrong,endless:false,tasks:shuffleCopy(wrong).map(word=>({word,stage:nextStage(temp)})),index:0,current:null,score:0,answeredCount:0,answered:false,wrong:new Map(),stageDeck:[],endlessQueue:[],cycle:0,lastWordId:null};el('test-area-result').hidden=true;el('test-area-question').hidden=false;prepare();renderQuestion();}
+  function restartSame(){if(!session)return;const prior=session,amount=prior.amount==='wrong'?'all':prior.amount,pool=wordsFor(prior.packIds);session={packIds:[...prior.packIds],mode:prior.mode,amount,pool,endless:amount==='endless',tasks:amount==='endless'?[]:finiteTasks(pool,amount,prior.mode),index:0,current:null,score:0,answeredCount:0,answered:false,wrong:new Map(),stageDeck:[],endlessQueue:[],cycle:0,lastWordId:null};el('test-area-result').hidden=true;el('test-area-question').hidden=false;prepare();renderQuestion();}
 
-    const words = sampleBossWords();
-    if (words.length < BOSS_QUESTION_COUNT) {
-      try { notify('ボス戦に使えるMASTER単語がまだ足りません。'); }
-      catch (_) {}
-      return;
-    }
-
-    bossSession = {
-      words,
-      index: 0,
-      score: 0,
-      answered: false
-    };
-
-    document.getElementById('boss-v01-question-area').hidden = false;
-    document.getElementById('boss-v01-result').hidden = true;
-
-    openBoss();
-    renderBossQuestion();
-  }
-
-  function renderBossQuestion() {
-    if (!bossSession) return;
-
-    const word = bossSession.words[bossSession.index];
-    bossSession.answered = false;
-
-    document.getElementById('boss-v01-counter').textContent =
-      `${bossSession.index + 1} / ${BOSS_QUESTION_COUNT}`;
-
-    document.getElementById('boss-v01-progress-bar').style.width =
-      `${(bossSession.index / BOSS_QUESTION_COUNT) * 100}%`;
-
-    document.getElementById('boss-v01-word').textContent = word.en;
-
-    const feedback = document.getElementById('boss-v01-feedback');
-    feedback.hidden = true;
-    feedback.classList.remove('bad');
-    feedback.textContent = '';
-
-    const next = document.getElementById('boss-v01-next');
-    next.hidden = true;
-    next.textContent =
-      bossSession.index === BOSS_QUESTION_COUNT - 1
-        ? '結果を見る →'
-        : '次の問題へ →';
-
-    const root = document.getElementById('boss-v01-options');
-    root.replaceChildren();
-
-    optionsFor(word).forEach(option => {
-      const button = document.createElement('button');
-      button.type = 'button';
-      button.className = 'boss-v01-option';
-      button.textContent = option.jp;
-
-      button.addEventListener('click', () => {
-        if (!bossSession || bossSession.answered) return;
-        bossSession.answered = true;
-
-        const correct = option.id === word.id;
-        if (correct) bossSession.score++;
-
-        root.querySelectorAll('button').forEach(b => {
-          b.disabled = true;
-          if (b === button) b.classList.add(correct ? 'right' : 'wrong');
-        });
-
-        // Always reveal the correct option too.
-        if (!correct) {
-          [...root.querySelectorAll('button')].forEach(b => {
-            if (b.textContent === word.jp) b.classList.add('right');
-          });
-        }
-
-        feedback.hidden = false;
-        feedback.classList.toggle('bad', !correct);
-        feedback.textContent = correct
-          ? `正解！ ${word.en} = ${word.jp}`
-          : `正解は「${word.jp}」。`;
-
-        next.hidden = false;
-      });
-
-      root.appendChild(button);
-    });
-  }
-
-  function nextBossQuestion() {
-    if (!bossSession || !bossSession.answered) return;
-
-    bossSession.index++;
-
-    if (bossSession.index >= BOSS_QUESTION_COUNT) {
-      renderBossResult();
-      return;
-    }
-
-    renderBossQuestion();
-  }
-
-  function renderBossResult() {
-    if (!bossSession) return;
-
-    document.getElementById('boss-v01-question-area').hidden = true;
-    document.getElementById('boss-v01-result').hidden = false;
-    document.getElementById('boss-v01-score').textContent =
-      `${bossSession.score} / ${BOSS_QUESTION_COUNT}`;
-  }
-
-  function watchApp() {
-    const boss = document.querySelector('.boss-teaser');
-    const adventure = document.querySelector('.adventure-panel');
-
-    const observer = new MutationObserver(queueSync);
-
-    if (boss) {
-      observer.observe(boss, {
-        subtree: true,
-        childList: true,
-        characterData: true,
-        attributes: true
-      });
-    }
-
-    if (adventure) {
-      observer.observe(adventure, {
-        subtree: true,
-        childList: true,
-        characterData: true,
-        attributes: true
-      });
-    }
-  }
-
-  function initBossV01() {
-    injectStyle();
-    createModal();
-    ensureChallengeButton();
-    syncBossTeaser();
-    watchApp();
-
-    // Covers initial render order and TEST MODE switches.
-    requestAnimationFrame(syncBossTeaser);
-    setTimeout(syncBossTeaser, 200);
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initBossV01, { once: true });
-  } else {
-    initBossV01();
-  }
+  function watch(){const o=new MutationObserver(queueSync);const boss=document.querySelector('.boss-teaser'),map=document.querySelector('.map-panel');if(boss)o.observe(boss,{subtree:true,childList:true,characterData:true,attributes:true});if(map)o.observe(map,{subtree:true,childList:true,characterData:true});}
+  function init(){injectStyle();createModal();ensureButton();syncTeaser();watch();requestAnimationFrame(syncTeaser);setTimeout(syncTeaser,200);}
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init,{once:true});else init();
 })();
