@@ -1,7 +1,7 @@
 'use strict';
 
 /*
- * ENGLISH QUEST — RECORD FIX v1.7.2
+ * ENGLISH QUEST — RECORD FIX v1.7.3
  * Load AFTER player-layer.js but BEFORE app.js.
  *
  * The original app.js migrate() rebuilds records from the original WORDS
@@ -108,8 +108,25 @@
 
     savedBeforeLoad = null;
 
+    // The course layer can render the home screen while deferred scripts
+    // are still executing, BEFORE the saved extra-word records are restored
+    // above.  Restoring state without repainting left the display at 0,
+    // even though state already contained the real progress.  Repaint once
+    // after all DOMContentLoaded handlers have finished.
+    setTimeout(() => {
+      try {
+        if (typeof renderHome === 'function') renderHome();
+        if (document.getElementById('library')?.classList.contains('active') &&
+            typeof renderLibrary === 'function') renderLibrary();
+        if (document.getElementById('data')?.classList.contains('active') &&
+            typeof renderData === 'function') renderData();
+      } catch (error) {
+        console.error('ENGLISH QUEST record-fix: redraw failed', error);
+      }
+    }, 0);
+
     const version = document.querySelector('.topbar .version');
-    if (version) version.textContent = 'v1.7.2 · FAMILY DATA';
+    if (version) version.textContent = 'v1.7.3 · FAMILY DATA';
   }
 
   // A deferred script runs while readyState may already be 'interactive'.
