@@ -1,6 +1,6 @@
 'use strict';
 
-/* ENGLISH QUEST — COURSE MAP v1.1 · FAMILY PACKS */
+/* ENGLISH QUEST — COURSE MAP v1.2 · TOEIC PRACTICE 100 */
 (() => {
   const STORAGE_KEY = 'english-quest-active-pack-v1';
 
@@ -16,7 +16,8 @@
     {id:'school-p5', group:'school', label:'PROGRAM 5', subtitle:'保存済み', source:'program', program:5},
     {id:'school-p6', group:'school', label:'PROGRAM 6', subtitle:'保存済み', source:'program', program:6},
     {id:'eiken5-start', group:'eiken', label:'英検5級', subtitle:'START 30・基本語彙', source:'tag'},
-    {id:'toeic550-start', group:'adult', label:'目指せ TOEIC 550', subtitle:'START 40・基礎語彙', source:'tag'}
+    {id:'toeic550-start', group:'adult', label:'目指せ TOEIC 550', subtitle:'START 40・基礎語彙', source:'tag'},
+    {id:'toeic550-practice', group:'adult', label:'TOEIC 550 実践編', subtitle:'実践100・語彙／多義語／表現／音声', source:'tag'}
   ];
 
   function wordsForPack(pack) {
