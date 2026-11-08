@@ -1,0 +1,4 @@
+// In course-layer.js, in const PACKS = [...], immediately after the existing
+// {id:'eiken5-start', ...} entry, add these two lines:
+    {id:'eiken5-unit2', group:'eiken', label:'英検5級・基礎②', subtitle:'LEVEL 1 / UNIT 2・学校／趣味／動作30語', source:'tag'},
+    {id:'eiken5-unit3', group:'eiken', label:'英検5級・基礎③', subtitle:'LEVEL 1 / UNIT 3・時間／曜日／疑問詞30語', source:'tag'},
