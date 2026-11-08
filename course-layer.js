@@ -16,6 +16,8 @@
     {id:'school-p5', group:'school', label:'PROGRAM 5', subtitle:'保存済み', source:'program', program:5},
     {id:'school-p6', group:'school', label:'PROGRAM 6', subtitle:'保存済み', source:'program', program:6},
     {id:'eiken5-start', group:'eiken', label:'英検5級', subtitle:'START 30・基本語彙', source:'tag'},
+    {id:'eiken5-unit2', group:'eiken', label:'英検5級・基礎②', subtitle:'LEVEL 1 / UNIT 2・学校／趣味／動作30語', source:'tag'},
+    {id:'eiken5-unit3', group:'eiken', label:'英検5級・基礎③', subtitle:'LEVEL 1 / UNIT 3・時間／曜日／疑問詞30語', source:'tag'},
     {id:'toeic550-start', group:'adult', label:'目指せ TOEIC 550', subtitle:'START 40・基礎語彙', source:'tag'},
     {id:'toeic550-practice', group:'adult', label:'TOEIC 550 実践編', subtitle:'実践100・語彙／多義語／表現／音声', source:'tag'}
   ];
